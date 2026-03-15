@@ -3,3 +3,6 @@ backend/repo
 
 backend/src/__pycache__
 backend/.env
+backend/PROJECT_DOCUMENTATION.md
+
+frontend/node_modules
