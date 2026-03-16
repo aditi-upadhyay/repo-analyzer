@@ -9,7 +9,7 @@ function Layout() {
             </div>
             <div className="flex-1">
                 <div className="h-16">
-                    <NavBar />
+                    <NavBar title="Repo Analyzer" />
                 </div>
                 <div >
                     <Main />
