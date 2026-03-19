@@ -1,1 +1,23 @@
 @import "tailwindcss";
+
+:root {
+  --blue-primary: #0066ff;
+  --blue-secondary: #0d7ff2;
+  --blue-light: #e9f2fe;
+  --blue-muted: #308ce866;
+}
+
+.text-blue-primary { color: var(--blue-primary); }
+.bg-blue-primary { background-color: var(--blue-primary); }
+
+.text-blue-secondary { color: var(--blue-secondary); }
+.bg-blue-secondary { background-color: var(--blue-secondary); }
+
+.text-blue-light { color: var(--blue-light); }
+.bg-blue-light { background-color: var(--blue-light); }
+
+.text-blue-muted { color: var(--blue-muted); }
+.bg-blue-muted { background-color: var(--blue-muted); }
+
+.border-blue-light { border-color: var(--blue-light); }
+.border-blue-primary { border-color: var(--blue-primary); }

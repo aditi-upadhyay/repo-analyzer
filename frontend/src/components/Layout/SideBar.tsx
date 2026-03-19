@@ -6,7 +6,7 @@ function SideBar() {
         <div className="h-full flex flex-col  gap-6 bg-white border-r border-slate-200 p-6">
 
             <div className="flex items-center gap-4">
-                <div className="size-10 bg-blue-500 rounded-lg flex items-center justify-center text-white">
+                <div className="size-10 bg-blue-secondary rounded-lg flex items-center justify-center text-white">
                     <span className="material-symbols-outlined text-2xl">
                         auto_awesome
                     </span>

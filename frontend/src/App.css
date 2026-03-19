@@ -1,13 +1,13 @@
 .bg-primary {
-    background-color: rgb(13 127 242 / var(--tw-bg-opacity, 1));
+    background-color: var(--blue-secondary);
 }
 
 .selected {
-  background-color: rgb(13, 127, 242) !important;
+  background-color: var(--blue-secondary) !important;
   color: white;
 }
 
 .primary-blue {
-  background-color: rgb(13, 127, 242);
-  color : #0066ff
+  background-color: var(--blue-secondary);
+  color : var(--blue-primary);
 }

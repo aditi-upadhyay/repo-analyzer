@@ -35,7 +35,7 @@ function NavBar({ title }: { title: string }) {
           <span className="material-symbols-outlined">help</span>
         </button>
 
-        <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-medium">
+        <div className="w-8 h-8 bg-blue-secondary text-white rounded-full flex items-center justify-center font-medium">
           A
         </div>
 
