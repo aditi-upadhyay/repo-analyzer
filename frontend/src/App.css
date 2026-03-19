@@ -6,3 +6,8 @@
   background-color: rgb(13, 127, 242) !important;
   color: white;
 }
+
+.primary-blue {
+  background-color: rgb(13, 127, 242);
+  color : #0066ff
+}

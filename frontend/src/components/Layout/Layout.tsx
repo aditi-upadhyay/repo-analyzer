@@ -7,11 +7,11 @@ function Layout() {
             <div className="w-1/6">
                 <SideBar />
             </div>
-            <div className="flex-1">
-                <div className="h-16">
+            <div className="flex-1 flex flex-col h-screen overflow-hidden">
+                <div className="flex-shrink-0">
                     <NavBar title="Repo Analyzer" />
                 </div>
-                <div >
+                <div className="flex-1 overflow-y-auto bg-gray-50">
                     <Main />
                 </div>
             </div>
