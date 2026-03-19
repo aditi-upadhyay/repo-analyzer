@@ -20,7 +20,7 @@ const EmptyState = () => {
     ]
 
     return (
-        <div className="flex h-full flex-col p-4 gap-4 bg-gray-100">
+        <div className="flex h-full flex-col p-4 gap-4 ">
             <div className="flex items-center justify-center gap-4">
 
                 {cards.map(card => (
