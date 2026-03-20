@@ -45,7 +45,7 @@ function ActivityState() {
                 </div>
             </div>
 
-            <Table repos={repos} />
+            <Table repos={repos} header="Recent Repositories"/>
         </div>
     );
 }

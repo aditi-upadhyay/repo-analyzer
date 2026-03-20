@@ -1,13 +1,13 @@
 import type { TableColumn } from "../types/table";
 
-function Table({ repos }: { repos: TableColumn[] }) {
+function Table({ repos, header }: { repos: TableColumn[], header: string }) {
 
 
     return (
         <div className="flex-1 bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
             <div className="flex justify-between items-center p-6 border-b border-slate-200 bg-white">
                 <div className="flex flex-col gap-1">
-                    <span className="text-lg text-slate-900 font-bold">Recent Repositories</span>
+                    <span className="text-lg text-slate-900 font-bold">{header}</span>
                     <span className="text-xs text-slate-500">Overview of the most recently analyzed projects</span>
                 </div>
                 <button className="text-sm font-semibold text-blue-secondary hover:text-blue-primary transition-colors cursor-pointer">View all</button>
