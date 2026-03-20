@@ -1,6 +1,6 @@
 import ActivityState from "../Dashboard/ActivityState";
 import EmptyState from "../Dashboard/EmptyState";
-function Main() {
+function Dashboard() {
     return (
         <div className="bg-gray-100">
             <ActivityState />
@@ -9,4 +9,4 @@ function Main() {
     );
 }
 
-export default Main;
+export default Dashboard;

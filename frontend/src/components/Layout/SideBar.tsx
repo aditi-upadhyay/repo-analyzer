@@ -26,7 +26,7 @@ function SideBar() {
                         key={item.title}
                         icon={item.icon}
                         label={item.title}
-                        selected={item.title === "Dashboard"}
+                        to={item.route}
                     />
                 ))}
 

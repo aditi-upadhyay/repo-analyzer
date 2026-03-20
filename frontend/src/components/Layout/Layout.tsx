@@ -1,6 +1,7 @@
 import SideBar from "./SideBar";
 import NavBar from "./NavBar";
-import Main from "./Main";
+import { Outlet } from "react-router-dom";
+
 function Layout() {
     return (
         <div className="flex h-screen">
@@ -12,7 +13,7 @@ function Layout() {
                     <NavBar title="Repo Analyzer" />
                 </div>
                 <div className="flex-1 overflow-y-auto bg-gray-50">
-                    <Main />
+                    <Outlet />
                 </div>
             </div>
         </div>
