@@ -1,8 +1,17 @@
 import DocPreviewCard from "../DocPreviewCard";
 import OverviewCard from "../OverviewCard";
 import Table from "../Table";
+import type { TableColumn } from "../../types/table";
 
 function ActivityState() {
+
+    const repos: TableColumn[] = [
+        { name: "auth-gateway-api", status: "Analyzed", updated: "2 mins ago", color: "text-green-600 bg-green-50", action: "View Documentation" },
+        { name: "customer-portal-frontend", status: "Processing", updated: "15 mins ago", color: "text-blue-600 bg-blue-50", action: "View Documentation" },
+        { name: "data-pipeline-worker", status: "Analyzed", updated: "1 hour ago", color: "text-green-600 bg-green-50", action: "View Documentation" },
+        { name: "legacy-payment-system", status: "Failed", updated: "Yesterday", color: "text-red-600 bg-red-50", action: "View Documentation" },
+    ];
+
     return (
         <div className="flex h-full flex-col p-4 gap-4 max-w-7xl mx-auto w-full">
             <DocPreviewCard />
@@ -36,7 +45,7 @@ function ActivityState() {
                 </div>
             </div>
 
-            <Table />
+            <Table repos={repos} />
         </div>
     );
 }

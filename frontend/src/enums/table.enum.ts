@@ -1,4 +1,4 @@
-export const SidebarItem = [
+export const Table = [
     {
         title: "Dashboard",
         icon: "dashboard",
@@ -9,27 +9,27 @@ export const SidebarItem = [
         icon: "folder",
         route: "/repositories",
     },
-    // {
-    //     title: "Codebase",
-    //     icon: "code",
-    //     route: "/codebase",
-    // },
+    {
+        title: "Codebase",
+        icon: "code",
+        route: "/codebase",
+    },
 
     {
         title: "Documentation",
         icon: "description",
         route: "/documentation",
     },
-    // {
-    //     title: "Insights",
-    //     icon: "insights",
-    //     route: "/insights",
-    // },
-    // {
-    //     title: "Search",
-    //     icon: "search",
-    //     route: "/search",
-    // },
+    {
+        title: "Insights",
+        icon: "insights",
+        route: "/insights",
+    },
+    {
+        title: "Search",
+        icon: "search",
+        route: "/search",
+    },
     {
         title: "Chat",
         icon: "chat",

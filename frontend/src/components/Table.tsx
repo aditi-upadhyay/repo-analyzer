@@ -1,10 +1,7 @@
-function Table() {
-    const repos = [
-        { name: "auth-gateway-api", status: "Analyzed", updated: "2 mins ago", color: "text-green-600 bg-green-50", action: "View Documentation" },
-        { name: "customer-portal-frontend", status: "Processing", updated: "15 mins ago", color: "text-blue-600 bg-blue-50", action: "View Documentation" },
-        { name: "data-pipeline-worker", status: "Analyzed", updated: "1 hour ago", color: "text-green-600 bg-green-50", action: "View Documentation" },
-        { name: "legacy-payment-system", status: "Failed", updated: "Yesterday", color: "text-red-600 bg-red-50", action: "View Documentation" },
-    ];
+import type { TableColumn } from "../types/table";
+
+function Table({ repos }: { repos: TableColumn[] }) {
+
 
     return (
         <div className="flex-1 bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
