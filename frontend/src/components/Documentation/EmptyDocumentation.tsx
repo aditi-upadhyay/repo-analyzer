@@ -1,4 +1,8 @@
+import { useState } from "react";
+import NewAnalysisModal from "../Modals/NewAnalysisModal";
+
 function EmptyDocumentation() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
     return (
         <div className="flex flex-col items-center justify-center h-full w-full bg-slate-50/50 p-8 relative overflow-hidden">
             <div className="absolute top-1/4 left-1/4 size-64 bg-blue-light/50 rounded-full blur-3xl -z-10 animate-pulse" />
@@ -24,11 +28,16 @@ function EmptyDocumentation() {
                 </p>
             </div>
 
-            <button className="flex items-center gap-3 bg-blue-secondary text-white p-5 px-8 rounded-2xl font-bold shadow-xl shadow-blue-600/30 transition-all duration-300 group relative overflow-hidden cursor-pointer">
+            <button
+                onClick={() => setIsModalOpen(true)}
+                className="flex items-center gap-3 bg-blue-secondary text-white p-5 px-8 rounded-2xl font-bold shadow-xl shadow-blue-600/30 transition-all duration-300 group relative overflow-hidden cursor-pointer"
+            >
                 <div className="absolute inset-0 bg-white/20 translate-x-full skew-x-12" />
                 <span className="material-symbols-outlined text-2xl relative z-10">add_circle</span>
                 <span className="text-lg relative z-10">Generate documentation</span>
-            </button>   
+            </button>
+
+            <NewAnalysisModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
 
 

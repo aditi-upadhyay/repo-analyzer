@@ -1,8 +1,10 @@
 import type { TableColumn } from "../../types/table";
 import Table from "../Table";
 import { useState } from "react";
+import NewAnalysisModal from "../Modals/NewAnalysisModal";
 
 function RepositoryState() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("All Repositories");
     const tabs = ["All Repositories", "Github", "Zip"];
 
@@ -26,12 +28,16 @@ function RepositoryState() {
                         </span>
                     ))}
                 </div>
-                <div className="flex bg-blue-secondary rounded-xl justify-center items-center gap-2 p-2 px-6">
-                    <span className="material-symbols-outlined text-lg text-white cursor-pointer">add</span>
-                    <span className="text-sm font-semibold text-white cursor-pointer">Add repository</span>
+                <div
+                    onClick={() => setIsModalOpen(true)}
+                    className="flex bg-blue-secondary rounded-xl justify-center items-center gap-2 p-2 px-6 cursor-pointer"
+                >
+                    <span className="material-symbols-outlined text-lg text-white">add</span>
+                    <span className="text-sm font-semibold text-white">Add repository</span>
                 </div>
             </div>
             <Table repos={repos} header="Repository State" />
+            <NewAnalysisModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </div>
     );
 }
