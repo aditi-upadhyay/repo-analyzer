@@ -3,8 +3,8 @@ import DocumentationState from "./Documentation/DocumentationState";
 function Documentation() {
     return (
         <div className="w-full h-full">
-            <EmptyDocumentation />
-            {/* <DocumentationState /> */}
+            {/* <EmptyDocumentation /> */}
+            <DocumentationState />
         </div>
     );
 }
