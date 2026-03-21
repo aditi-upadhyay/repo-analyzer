@@ -2,8 +2,12 @@ import DocPreviewCard from "../DocPreviewCard";
 import OverviewCard from "../OverviewCard";
 import Table from "../Table";
 import type { TableColumn } from "../../types/table";
+import NewAnalysisModal from "../Modals/NewAnalysisModal";
 
+import { useState } from "react";
 function ActivityState() {
+
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
     const repos: TableColumn[] = [
         { name: "auth-gateway-api", status: "Analyzed", updated: "2 mins ago", color: "text-green-600 bg-green-50", action: "View Documentation" },
@@ -29,9 +33,10 @@ function ActivityState() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 relative z-10">
-                        <button className="flex flex-col items-center justify-center gap-2 cursor-pointer bg-slate-50 hover:bg-blue-secondary hover:text-white p-4 rounded-xl transition-all duration-300 group/btn border border-slate-100 hover:border-blue-secondary hover:shadow-md">
+                        <button className="flex flex-col items-center justify-center gap-2 cursor-pointer bg-slate-50 hover:bg-blue-secondary hover:text-white p-4 rounded-xl transition-all duration-300 group/btn border border-slate-100 hover:border-blue-secondary hover:shadow-md"
+                            onClick={() => setIsModalOpen(true)}>
                             <span className="material-symbols-outlined text-2xl text-slate-400 group-hover/btn:text-white">add_circle</span>
-                            <span className="text-[10px] font-bold uppercase tracking-tighter">Analyze New</span>
+                            <span className="text-[10px] font-bold uppercase tracking-tighter" >Analyze New</span>
                         </button>
                         <button className="flex flex-col items-center justify-center gap-2 cursor-pointer bg-slate-50 hover:bg-blue-secondary hover:text-white p-4 rounded-xl transition-all duration-300 group/btn border border-slate-100 hover:border-blue-secondary hover:shadow-md">
                             <span className="material-symbols-outlined text-2xl text-slate-400 group-hover/btn:text-white">cloud_upload</span>
@@ -75,6 +80,7 @@ function ActivityState() {
                     </tr>
                 )}
             />
+            <NewAnalysisModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </div>
     );
 }
