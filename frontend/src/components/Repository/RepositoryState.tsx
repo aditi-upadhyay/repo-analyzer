@@ -40,6 +40,8 @@ function RepositoryState() {
                 data={repos}
                 header="Repository State"
                 columnHeaders={["Repository", "Status", "Last Updated", "Actions"]}
+                totalEntries={repos.length}
+                columnEntries={4}
                 renderRow={(repo, i) => (
                     <tr key={i} className="hover:bg-slate-50/50 transition-colors group cursor-pointer">
                         <td className="px-6 py-4">

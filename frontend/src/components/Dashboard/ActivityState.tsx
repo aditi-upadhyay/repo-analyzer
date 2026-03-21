@@ -13,7 +13,7 @@ function ActivityState() {
     ];
 
     return (
-        <div className="flex h-full flex-col p-4 gap-4 max-w-7xl mx-auto w-full">
+        <div className="flex flex-col p-4 gap-4 max-w-7xl mx-auto w-full">
             <DocPreviewCard />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -49,6 +49,8 @@ function ActivityState() {
                 data={repos}
                 header="Recent Repositories"
                 columnHeaders={["Repository", "Status", "Last Updated", "Actions"]}
+                totalEntries={repos.length}
+                columnEntries={3}
                 renderRow={(repo, i) => (
                     <tr key={i} className="hover:bg-slate-50/50 transition-colors group cursor-pointer">
                         <td className="px-6 py-4">

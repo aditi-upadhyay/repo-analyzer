@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface NewAnalysisModalProps {
     isOpen: boolean;
@@ -6,6 +7,7 @@ interface NewAnalysisModalProps {
 }
 
 function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState("GitHub URL");
     const tabs = [
         { name: "GitHub URL", icon: "link" },
@@ -14,6 +16,15 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
     ];
 
     if (!isOpen) return null;
+
+    const handleAnalyze = () => {
+        onClose();
+        navigate("/analysis");
+    };
+
+    const handleClose = () => {
+        onClose();
+    }
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
@@ -29,7 +40,7 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
                             <p className="text-slate-500 mt-2 font-medium">Connect your repository to begin the structural audit.</p>
                         </div>
                         <button
-                            onClick={onClose}
+                            onClick={handleClose}
                             className="p-2 hover:bg-slate-100 rounded-full transition-colors cursor-pointer text-slate-400"
                         >
                             <span className="material-symbols-outlined">close</span>
@@ -136,7 +147,10 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
                     >
                         Cancel
                     </button>
-                    <button className="flex items-center gap-2 bg-blue-secondary hover:bg-blue-primary text-white py-3 px-8 rounded-2xl font-bold shadow-xl shadow-blue-600/20 transition-all cursor-pointer group">
+                    <button
+                        onClick={handleAnalyze}
+                        className="flex items-center gap-2 bg-blue-secondary hover:bg-blue-primary text-white py-3 px-8 rounded-2xl font-bold shadow-xl shadow-blue-600/20 transition-all cursor-pointer group"
+                    >
                         Analyze repository
                         <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
                     </button>
