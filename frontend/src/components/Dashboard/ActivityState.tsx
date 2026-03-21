@@ -45,7 +45,34 @@ function ActivityState() {
                 </div>
             </div>
 
-            <Table repos={repos} header="Recent Repositories"/>
+            <Table
+                data={repos}
+                header="Recent Repositories"
+                columnHeaders={["Repository", "Status", "Last Updated", "Actions"]}
+                renderRow={(repo, i) => (
+                    <tr key={i} className="hover:bg-slate-50/50 transition-colors group cursor-pointer">
+                        <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                                <div className="size-8 rounded-lg bg-blue-light flex items-center justify-center text-blue-primary group-hover:bg-blue-secondary group-hover:text-white transition-colors">
+                                    <span className="material-symbols-outlined text-lg">folder</span>
+                                </div>
+                                <span className="text-sm font-semibold text-slate-700 group-hover:text-blue-secondary transition-colors">{repo.name}</span>
+                            </div>
+                        </td>
+                        <td className="px-6 py-4">
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${repo.color}`}>
+                                {repo.status}
+                            </span>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-slate-500">{repo.updated}</td>
+                        <td className="px-6 py-4 text-right">
+                            <button className="text-slate-400 hover:text-blue-secondary transition-colors">
+                                <span className="text-primary font-semibold hover:text-primary/80 transition-colors text-sm">{repo.action}</span>
+                            </button>
+                        </td>
+                    </tr>
+                )}
+            />
         </div>
     );
 }
