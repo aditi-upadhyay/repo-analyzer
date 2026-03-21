@@ -41,6 +41,25 @@ def main():
 
         # print(docs)
 
+def startAnalyzing(url: str):
+    clone_repository()
+
+    print("Scanning repository...\n")
+
+    functions = scan_repository(CLONE_DIR)
+
+    print("Total functions found:", len(functions))
+
+    print("\nGenerating documentation...\n")
+
+    for func in functions[:5]:
+
+        print("=" * 50)
+        print("Function:", func["name"])
+
+        docs = generate_documentation(func, CLONE_DIR)
+
+        # print(docs)
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 interface NewAnalysisModalProps {
   isOpen: boolean;
@@ -18,9 +19,20 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
 
   if (!isOpen) return null;
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/analyze", {
+        repo_url: repoUrl
+      })
+      console.log(response)
+      if(response.data){
     onClose();
     navigate("/analysis");
+      }
+    } catch (error) {
+      console.error(error)
+    }
+
   };
 
   const handleClose = () => {
@@ -86,7 +98,6 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
                   className="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-blue-secondary/30 focus:bg-white transition-all text-slate-700 placeholder:text-slate-300 font-medium"
                 />
               </div>
-              {repoUrl}
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                   Access Token (Optional)
