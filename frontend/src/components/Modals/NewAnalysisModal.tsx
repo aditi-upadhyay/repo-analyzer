@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
 interface NewAnalysisModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -21,18 +20,19 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
 
   const handleAnalyze = async () => {
     try {
+      const sessionId = crypto.randomUUID();
       const response = await axios.post("http://127.0.0.1:8000/analyze", {
-        repo_url: repoUrl
-      })
-      console.log(response)
-      if(response.data){
-    onClose();
-    navigate("/analysis");
-      }
+        repo_url: repoUrl,
+        session_id: sessionId,
+      });
+      console.log(response);
+      onClose();
+      navigate("/analysis", {
+        state: { sessionId },
+      });
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-
   };
 
   const handleClose = () => {
