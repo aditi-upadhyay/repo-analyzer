@@ -3,6 +3,7 @@ backend/repo
 
 backend/src/__pycache__
 backend/src/core/__pycache__
+backend/src/service/__pycache__
 backend/.env
 backend/PROJECT_DOCUMENTATION.md
 

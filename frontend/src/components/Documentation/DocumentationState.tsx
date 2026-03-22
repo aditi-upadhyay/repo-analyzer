@@ -26,7 +26,7 @@ function DocumentationState() {
             <div className="w-full h-full flex flex-col relative">
                 <button
                     onClick={() => setView("table")}
-                    className="absolute top-6 left-6 z-50 flex items-center gap-1 text-xs font-bold text-slate-400 hover:text-blue-secondary transition-colors cursor-pointer bg-white/80 backdrop-blur-sm p-2 rounded-lg border border-slate-100 shadow-sm"
+                    className="absolute top-2 left-6 z-50 flex items-center gap-1 text-xs font-bold text-slate-400 hover:text-blue-secondary transition-colors cursor-pointer bg-white/80 backdrop-blur-sm p-2 rounded-lg border border-slate-100 shadow-sm"
                 >
                     <span className="material-symbols-outlined text-sm">arrow_back</span>
                     Back to Repositories

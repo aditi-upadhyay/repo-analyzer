@@ -47,6 +47,16 @@ async def websocket_endpoint(websocket: WebSocket):
 def get_users():
     return {"users": ["Aditi", "John"]}
 
+@app.get("/documentation")
+def get_documentation():
+    import os
+    doc_path = os.path.join(os.getcwd(), "PROJECT_DOCUMENTATION.md")
+    if not os.path.exists(doc_path):
+        return {"error": "Documentation file not found"}
+    with open(doc_path, "r") as f:
+        content = f.read()
+    return {"content": content}
+
 @app.post("/analyze")
 async def analyze_repo(data: RepoRequest, background_tasks: BackgroundTasks):
     background_tasks.add_task(test, data.repo_url,
