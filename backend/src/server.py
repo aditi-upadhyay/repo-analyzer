@@ -1,8 +1,19 @@
 from fastapi import FastAPI, BackgroundTasks, WebSocket, WebSocketDisconnect
+import urllib.request
+import logging
+import sys
 from fastapi.middleware.cors import CORSMiddleware
 from .service.clone_repo import startAnalyzing, test
 from pydantic import BaseModel
 from .core.connection_shared import manager
+from .config.db import sessions
+
+try:
+    sessions.insert_one({"test": "hello"})
+    print("Database connected successfully!")
+except Exception as e:
+    print(e)
+    
 app = FastAPI()
 
 origins = [
