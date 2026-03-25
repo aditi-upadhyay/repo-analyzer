@@ -4,6 +4,8 @@ import Dashboard from "./components/Layout/Dashboard";
 import Repository from "./components/Repository";
 import Documentation from "./components/Documentation";
 import AnalysisProgress from "./components/Analysis/AnalysisProgress";
+import LandingPage from "./components/Landing/LandingPage";
+import LoginPage from "./components/Landing/LoginPage";
 function App() {
   return (
     <Routes>
@@ -16,6 +18,8 @@ function App() {
         <Route path="chat" element={<div className="p-8">Chat Page (Work in Progress)</div>} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Route>
+      <Route path="signup" element={<LandingPage />} />
+      <Route path="login" element={<LoginPage />} />
     </Routes>
   );
 }

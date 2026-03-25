@@ -5,4 +5,9 @@
   --color-blue-secondary: #0d7ff2;
   --color-blue-light: #e9f2fe;
   --color-blue-muted: #308ce866;
+  --color-landing-bg: #eef2ff;
+  --color-landing-text: #0f172a;
+  --color-landing-subtext: #64748b;
+  --color-landing-accent: #0d7ff2;
+  --color-landing-input-bg: #2d2d2d;
 }

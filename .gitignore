@@ -5,6 +5,10 @@ backend/src/__pycache__
 backend/src/core/__pycache__
 backend/src/service/__pycache__
 backend/src/config/__pycache__
+backend/src/routes/__pycache__
+backend/src/utils/__pycache__
+backend/src/schemas/__pycache__
+backend/src/db/__pycache__
 backend/.env
 backend/PROJECT_DOCUMENTATION.md
 
