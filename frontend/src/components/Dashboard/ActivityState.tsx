@@ -3,9 +3,9 @@ import OverviewCard from "../OverviewCard";
 import Table from "../Table";
 import type { TableColumn } from "../../types/table";
 import NewAnalysisModal from "../Modals/NewAnalysisModal";
-
 import { useState } from "react";
-function ActivityState() {
+
+function ActivityState({data}) {
 
     const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -21,7 +21,7 @@ function ActivityState() {
             <DocPreviewCard />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <OverviewCard icon="folder_managed" title="REPOSITORIES ANALYZED" description="42" />
+                <OverviewCard icon="folder_managed" title="REPOSITORIES ANALYZED" description={data.length} />
                 <OverviewCard icon="description" title="DOCUMENTS GENERATED" description="124" />
 
                 <div className="flex flex-col gap-5 p-6 bg-white rounded-xl border border-slate-200 shadow-sm relative overflow-hidden group">

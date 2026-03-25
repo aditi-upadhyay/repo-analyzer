@@ -7,6 +7,7 @@ from .service.clone_repo import startAnalyzing, test
 from pydantic import BaseModel
 from .core.connection_shared import manager
 from .config.db import sessions
+from .routes.repository import router as repo_router
 
 try:
     sessions.insert_one({"test": "hello"})
@@ -53,7 +54,7 @@ async def websocket_endpoint(websocket: WebSocket):
     except:
         manager.disconnect(session_id)
 
-
+app.include_router(repo_router, prefix="/api")
 @app.get("/users")
 def get_users():
     return {"users": ["Aditi", "John"]}
@@ -70,7 +71,7 @@ def get_documentation():
 
 @app.post("/analyze")
 async def analyze_repo(data: RepoRequest, background_tasks: BackgroundTasks):
-    background_tasks.add_task(test, data.repo_url,
+    background_tasks.add_task(startAnalyzing, data.repo_url,
         data.session_id)
     return {"status": "Analysis started", "session_id": data.session_id}
 

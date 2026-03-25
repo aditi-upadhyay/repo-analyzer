@@ -16,4 +16,5 @@ client = MongoClient(
 )
 db = client["repo-analyzer"]
 
+repository_collection = db["repository"]
 sessions = db["sessions"]
