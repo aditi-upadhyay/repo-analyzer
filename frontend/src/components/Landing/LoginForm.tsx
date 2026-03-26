@@ -1,23 +1,22 @@
 import React from 'react';
 import { GoogleLogin } from "@react-oauth/google";
+import axios from "axios";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 
 const LoginForm: React.FC = () => {
 
     const handleSuccess = async (credentialResponse: any) => {
         console.log("Google token:", credentialResponse.credential);
-    
-        const res = await fetch("http://127.0.0.1:8000/auth/google", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
+
+        try {
+            const response = await axios.post(`${apiBaseUrl}/auth/google`, {
                 token: credentialResponse.credential,
-            }),
-        });
-    
-        const data = await res.json();
-        console.log("Backend response:", data);
+            });
+
+            console.log("Backend response:", response.data);
+        } catch (error) {
+            console.error("Login error:", error);
+        }
     };
 
     return (

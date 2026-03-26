@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from .core.connection_shared import manager
 from .config.db import sessions
 from .routes.repository import router as repo_router
+from .routes.config import router as config_router
 
 try:
     sessions.insert_one({"test": "hello"})
@@ -55,6 +56,7 @@ async def websocket_endpoint(websocket: WebSocket):
         manager.disconnect(session_id)
 
 app.include_router(repo_router, prefix="/api")
+app.include_router(config_router, prefix="/api")
 @app.get("/users")
 def get_users():
     return {"users": ["Aditi", "John"]}
