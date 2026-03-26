@@ -1,27 +1,45 @@
 import DocPreviewCard from "../DocPreviewCard";
 import OverviewCard from "../OverviewCard";
 import Table from "../Table";
-import type { TableColumn } from "../../types/table";
 import NewAnalysisModal from "../Modals/NewAnalysisModal";
 import { useState } from "react";
+import { RepositoryStatus } from "../../enums/repository.enum";
 
-function ActivityState({data}) {
+function ActivityState({ data = [] }) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const [isModalOpen, setIsModalOpen] = useState(false)
+    const getStatusColor = (status: string) =>{
+        switch (status){
+            case RepositoryStatus.COMPLETED :
+                return "text-green-600 bg-green-50";
+            case RepositoryStatus.ANALYZING :
+                return "text-slate-600 bg-slate-50"
+            case RepositoryStatus.FAILED :
+                return "text-red-600 bg-red-50";
+            case RepositoryStatus.PENDING :
+                return "text-blue-600 bg-blue-50";
+            default : 
+                return "text-slate-600 bg-slate-50";
+        }
+    }
+    
 
-    const repos: TableColumn[] = [
-        { name: "auth-gateway-api", status: "Analyzed", updated: "2 mins ago", color: "text-green-600 bg-green-50", action: "View Documentation" },
-        { name: "customer-portal-frontend", status: "Processing", updated: "15 mins ago", color: "text-blue-600 bg-blue-50", action: "View Documentation" },
-        { name: "data-pipeline-worker", status: "Analyzed", updated: "1 hour ago", color: "text-green-600 bg-green-50", action: "View Documentation" },
-        { name: "legacy-payment-system", status: "Failed", updated: "Yesterday", color: "text-red-600 bg-red-50", action: "View Documentation" },
-    ];
+    const formatDate = (dateStr: string) => {
+        if (!dateStr) return "N/A";
+        return new Date(dateStr).toLocaleDateString(undefined, {
+            day: 'numeric',
+            month: 'short',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
 
     return (
         <div className="flex flex-col p-4 gap-4 max-w-7xl mx-auto w-full">
             <DocPreviewCard />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <OverviewCard icon="folder_managed" title="REPOSITORIES ANALYZED" description={data.length} />
+                <OverviewCard icon="folder_managed" title="REPOSITORIES ANALYZED" description={data.length.toString()} />
                 <OverviewCard icon="description" title="DOCUMENTS GENERATED" description="124" />
 
                 <div className="flex flex-col gap-5 p-6 bg-white rounded-xl border border-slate-200 shadow-sm relative overflow-hidden group">
@@ -51,13 +69,13 @@ function ActivityState({data}) {
             </div>
 
             <Table
-                data={repos}
+                data={data}
                 header="Recent Repositories"
                 columnHeaders={["Repository", "Status", "Last Updated", "Actions"]}
-                totalEntries={repos.length}
-                columnEntries={3}
-                renderRow={(repo, i) => (
-                    <tr key={i} className="hover:bg-slate-50/50 transition-colors group cursor-pointer">
+                totalEntries={data.length}
+                columnEntries={5}
+                renderRow={(repo: any, i) => (
+                    <tr key={repo._id || i} className="hover:bg-slate-50/50 transition-colors group cursor-pointer">
                         <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
                                 <div className="size-8 rounded-lg bg-blue-light flex items-center justify-center text-blue-primary group-hover:bg-blue-secondary group-hover:text-white transition-colors">
@@ -67,14 +85,14 @@ function ActivityState({data}) {
                             </div>
                         </td>
                         <td className="px-6 py-4">
-                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${repo.color}`}>
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${getStatusColor(repo.status)}`}>
                                 {repo.status}
                             </span>
                         </td>
-                        <td className="px-6 py-4 text-sm text-slate-500">{repo.updated}</td>
+                        <td className="px-6 py-4 text-sm text-slate-500">{formatDate(repo.updated)}</td>
                         <td className="px-6 py-4 text-right">
                             <button className="text-slate-400 hover:text-blue-secondary transition-colors">
-                                <span className="text-primary font-semibold hover:text-primary/80 transition-colors text-sm">{repo.action}</span>
+                                <span className="text-primary font-semibold hover:text-primary/80 transition-colors text-sm">View Documentation</span>
                             </button>
                         </td>
                     </tr>
