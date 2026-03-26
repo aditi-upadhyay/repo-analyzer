@@ -17,12 +17,12 @@ const Navbar: React.FC = () => {
                 >
                     Login
                 </Link>
-                <Link
+                {/* <Link
                     to="/signup"
                     className={`px-5 py-2.5 text-sm font-semibold rounded-lg transition-all shadow-sm ${isSignup ? 'bg-landing-accent text-white hover:bg-opacity-90' : 'text-landing-subtext hover:text-landing-text border border-gray-100'}`}
                 >
                     Sign Up
-                </Link>
+                </Link> */}
             </div>
         </nav>
     );
