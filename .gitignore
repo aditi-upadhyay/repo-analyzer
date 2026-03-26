@@ -8,6 +8,7 @@ backend/src/config/__pycache__
 backend/src/routes/__pycache__
 backend/src/utils/__pycache__
 backend/src/schema/__pycache__
+backend/src/models/__pycache__
 backend/src/db/__pycache__
 backend/.env
 backend/PROJECT_DOCUMENTATION.md
