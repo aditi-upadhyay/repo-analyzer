@@ -3,8 +3,9 @@ import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App.tsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { AuthProvider } from "./context/AuthContext";
 import axios from "axios";
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Root element not found");
@@ -12,16 +13,18 @@ const root = createRoot(rootElement);
 
 const init = async () => {
   try {
-    
+
     const response = await axios.get(`${apiBaseUrl}/api/config/google-client-id`);
 
     const clientId = response.data.clientId;
 
     root.render(
       <GoogleOAuthProvider clientId={clientId}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <AuthProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </AuthProvider>
       </GoogleOAuthProvider>
     );
   } catch (error) {

@@ -1,18 +1,26 @@
 import React from 'react';
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 
 const LoginForm: React.FC = () => {
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
     const handleSuccess = async (credentialResponse: any) => {
         console.log("Google token:", credentialResponse.credential);
 
         try {
-            const response = await axios.post(`${apiBaseUrl}/auth/google`, {
+            const response = await axios.post(`${apiBaseUrl}/api/auth/google`, {
                 token: credentialResponse.credential,
             });
 
+            if (response.data.status === "success") {
+                login(response.data.data);
+                navigate("/dashboard");
+            }
             console.log("Backend response:", response.data);
         } catch (error) {
             console.error("Login error:", error);
