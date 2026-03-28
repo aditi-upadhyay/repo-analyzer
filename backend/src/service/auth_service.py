@@ -18,6 +18,8 @@ class AuthService:
             email = idinfo['email']
             full_name = idinfo.get('name')
             avatar_url = idinfo.get('picture')
+            google_id = idinfo.get('sub')
+            now = datetime.utcnow()
             
             # Check if user exists
             user = user_collection.find_one({"email": email})
@@ -27,7 +29,9 @@ class AuthService:
                 update_data = {
                     "fullName": full_name,
                     "avatarUrl": avatar_url,
-                    "updatedAt": datetime.utcnow()
+                    "googleId": google_id,
+                    "lastLogin": now,
+                    "updatedAt": now
                 }
                 user_collection.update_one({"_id": user["_id"]}, {"$set": update_data})
                 user = user_collection.find_one({"_id": user["_id"]})
@@ -40,10 +44,12 @@ class AuthService:
                     "email": email,
                     "fullName": full_name,
                     "avatarUrl": avatar_url,
+                    "googleId": google_id,
                     "role": "user",
                     "status": "active",
-                    "createdAt": datetime.utcnow(),
-                    "updatedAt": datetime.utcnow()
+                    "lastLogin": now,
+                    "createdAt": now,
+                    "updatedAt": now
                 }
                 result = user_collection.insert_one(user_data)
                 user = user_collection.find_one({"_id": result.inserted_id})

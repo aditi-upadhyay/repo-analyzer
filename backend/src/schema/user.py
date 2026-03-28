@@ -9,6 +9,8 @@ class UserBase(BaseModel):
     avatarUrl: Optional[str] = None
     role: str = "user"
     status: str = "active"
+    googleId: Optional[str] = None
+    lastLogin: Optional[datetime] = None
 
 class UserCreate(UserBase):
     pass
