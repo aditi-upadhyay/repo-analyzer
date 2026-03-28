@@ -8,6 +8,8 @@ from pydantic import BaseModel
 from .core.connection_shared import manager
 from .config.db import sessions
 from .routes.repository import router as repo_router
+from .routes.user import router as user_router
+from .routes.auth import router as auth_router
 from .routes.config import router as config_router
 
 try:
@@ -56,10 +58,9 @@ async def websocket_endpoint(websocket: WebSocket):
         manager.disconnect(session_id)
 
 app.include_router(repo_router, prefix="/api")
+app.include_router(user_router, prefix="/api")
+app.include_router(auth_router, prefix="/api")
 app.include_router(config_router, prefix="/api")
-@app.get("/users")
-def get_users():
-    return {"users": ["Aditi", "John"]}
 
 @app.get("/documentation")
 def get_documentation():
