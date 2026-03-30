@@ -7,7 +7,7 @@ class RepositoryBase(BaseModel):
     repoUrl: str
     sourceType: str = "github"
     status: str = "pending"
-    userId: Optional[str] = None
+    user_id: Optional[str] = None
 
 class RepositoryCreate(RepositoryBase):
     pass
