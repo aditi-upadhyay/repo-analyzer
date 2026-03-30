@@ -47,8 +47,12 @@ class RepositoryService:
     def get_repositories(user_id: Optional[str] = None) -> List[dict]:
         query = {}
         if user_id:
-            query["userId"] = ObjectId(user_id)
-        
+            try:
+                query["userId"] = ObjectId(user_id)
+            except Exception:
+                # If invalid ObjectId, return empty list or handle as needed
+                print(f"Invalid user_id format: {user_id}")
+                return []
         repos = list(repository_collection.find(query))
         for repo in repos:
             repo["_id"] = str(repo["_id"])

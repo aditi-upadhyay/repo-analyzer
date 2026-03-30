@@ -11,9 +11,9 @@ def create_repo(repo: RepositoryCreate):
     new_repo = RepositoryService.create_repository(repo.dict())
     return {"status": "success", "data": new_repo}
 
-@router.get("/repositories")
-def get_all_repositories(userId: Optional[str] = None):
-    repos = RepositoryService.get_repositories(userId)
+@router.get("/repositories/{user_id}")
+def get_all_repositories(user_id: str):
+    repos = RepositoryService.get_repositories(user_id)
     return {"status": "success", "data": repos}
 
 @router.get("/repositories/{repo_id}")
