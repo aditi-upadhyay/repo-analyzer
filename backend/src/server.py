@@ -11,6 +11,7 @@ from .routes.repository import router as repo_router
 from .routes.user import router as user_router
 from .routes.auth import router as auth_router
 from .routes.config import router as config_router
+from .routes.document import router as document_router
 
 try:
     sessions.insert_one({"test": "hello"})
@@ -61,6 +62,7 @@ app.include_router(repo_router, prefix="/api")
 app.include_router(user_router, prefix="/api")
 app.include_router(auth_router, prefix="/api")
 app.include_router(config_router, prefix="/api")
+app.include_router(document_router, prefix="/api/documents", tags=["documents"])
 
 @app.get("/documentation")
 def get_documentation():
