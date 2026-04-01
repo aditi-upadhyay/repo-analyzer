@@ -2,12 +2,33 @@ import DocPreviewCard from "../DocPreviewCard";
 import OverviewCard from "../OverviewCard";
 import Table from "../Table";
 import NewAnalysisModal from "../Modals/NewAnalysisModal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RepositoryStatus } from "../../enums/repository.enum";
+import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function ActivityState({ data = [] }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const {user} = useAuth()
+  const [documents, setDocuments] = useState([])
+  
+  useEffect (() =>{
+    fetchDocuments()
+  },[user])
+
+  const fetchDocuments = async ()=>{
+    if(!user?._id) return;
+
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/documents/${user._id}`)
+      const doc = response?.data || []
+      setDocuments(doc)
+    } catch (error) {
+      console.error("Error fetching documents",error)
+    }
+  }
   const getStatusColor = (status: string) => {
     switch (status) {
       case RepositoryStatus.COMPLETED:
@@ -46,7 +67,7 @@ function ActivityState({ data = [] }) {
         <OverviewCard
           icon="description"
           title="DOCUMENTS GENERATED"
-          description="124"
+          description={documents.length.toString()}
         />
 
         <div className="flex flex-col gap-5 p-6 bg-white rounded-xl border border-slate-200 shadow-sm relative overflow-hidden group">
