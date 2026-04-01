@@ -50,20 +50,17 @@ class DocumentService:
         return DocumentService._add_ui_fields(doc_data)
 
     @staticmethod
-    def get_documents(repository_id: Optional[str] = None, user_id: Optional[str] = None) -> List[dict]:
+    def get_documents(user_id: str) -> List[dict]:
         query = {}
-        if repository_id:
-            query["repository_id"] = ObjectId(repository_id)
-        if user_id:
-            query["user_id"] = ObjectId(user_id)
-            
+        
+        oid = ObjectId(user_id)
+        query["$or"] = [
+            {"user_id": user_id},
+        ]
         docs = list(document_collection.find(query))
         for doc in docs:
             doc["_id"] = str(doc["_id"])
-            if "repository_id" in doc:
-                doc["repository_id"] = str(doc["repository_id"])
-            if "user_id" in doc:
-                doc["user_id"] = str(doc["user_id"])
+            doc["user_id"] = str(doc["user_id"])
             DocumentService._add_ui_fields(doc)
         return docs
 

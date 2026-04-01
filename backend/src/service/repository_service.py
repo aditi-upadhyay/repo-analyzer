@@ -55,7 +55,6 @@ class RepositoryService:
         if user_id:
             try:
                 # Try to find by ObjectId OR String, across all possible field names
-                oid = ObjectId(user_id)
                 query["$or"] = [
                      {"user_id": user_id},
                 ]

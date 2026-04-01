@@ -9,9 +9,9 @@ router = APIRouter()
 async def create_document(doc_data: DocumentCreate):
     return DocumentService.create_document(doc_data.dict())
 
-@router.get("/", response_model=List[DocumentResponse])
-async def get_documents(repository_id: Optional[str] = None, user_id: Optional[str] = None):
-    return DocumentService.get_documents(repository_id, user_id)
+@router.get("/{user_id}", response_model=List[DocumentResponse])
+async def get_documents(user_id: str = None):
+    return DocumentService.get_documents(user_id)
 
 @router.get("/{doc_id}", response_model=DocumentResponse)
 async def get_document_by_id(doc_id: str):
