@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 interface User {
     _id: string;
@@ -13,11 +15,22 @@ interface User {
     color?: string;
 }
 
+interface Document {
+    _id: string;
+    user_id: string;
+    repository_id: string;
+    created_at: string;
+    updated_at: string;
+    status: string;
+    content?: string;
+}
+
 interface AuthContextType {
     user: User | null;
     login: (userData: User) => void;
     logout: () => void;
     loading: boolean;
+    documents: Document[] | []
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,6 +38,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const [documents, setDocuments] = useState<any[]>([]);
 
     useEffect(() => {
         const savedUser = localStorage.getItem('user');
@@ -34,6 +48,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(false);
     }, []);
 
+    useEffect(() => {
+        if (user?._id) {
+            fetchDocuments();
+        }
+    }, [user]);
+    
     const login = (userData: User) => {
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
@@ -44,8 +64,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.removeItem('user');
     };
 
+    const fetchDocuments = async () => {
+        if (!user?._id) return;
+      
+        try {
+          const response = await axios.get(`${API_BASE_URL}/api/documents/${user._id}`);
+          const doc = response?.data || [];
+          setDocuments(doc);
+        } catch (error) {
+          console.error(error);
+        }
+      };
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, logout, loading, documents }}>
             {children}
         </AuthContext.Provider>
     );
