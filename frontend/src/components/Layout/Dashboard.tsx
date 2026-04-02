@@ -31,7 +31,6 @@ function Dashboard() {
     return (
         <div className="bg-gray-100 min-h-full">
             {isEmptyState ? <EmptyState /> : <ActivityState data={data} />}
-
         </div>
     );
 }
