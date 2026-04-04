@@ -1,13 +1,20 @@
 import type { TableColumn } from "../../types/table";
 import Table from "../Table";
-import { useState } from "react";
 import NewAnalysisModal from "../Modals/NewAnalysisModal";
 import DocumentationView from "./DocumentationView";
+import { useDocumentation } from "../../context/DocumentationContext";
 
 function DocumentationState() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState("All Repositories");
-    const [view, setView] = useState<"table" | "details">("table");
+    const {
+        isModalOpen,
+        setIsModalOpen,
+        activeTab,
+        setActiveTab,
+        view,
+        setView,
+        setSelectedRepo
+    } = useDocumentation();
+
     const tabs = ["All Repositories", "Github", "Zip"];
 
     const repos: TableColumn[] = [
@@ -82,7 +89,10 @@ function DocumentationState() {
                         <td className="px-6 py-4 text-sm text-slate-500">{repo.updated}</td>
                         <td className="px-6 py-4 text-right">
                             <button
-                                onClick={() => setView("details")}
+                                onClick={() => {
+                                    setSelectedRepo(repo);
+                                    setView("details");
+                                }}
                                 className="text-slate-400 hover:text-blue-secondary transition-colors cursor-pointer"
                             >
                                 <span className="text-primary font-semibold hover:text-primary/80 transition-colors text-sm">{repo.action}</span>

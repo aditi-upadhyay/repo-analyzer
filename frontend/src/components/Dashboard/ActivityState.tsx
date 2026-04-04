@@ -5,11 +5,14 @@ import NewAnalysisModal from "../Modals/NewAnalysisModal";
 import { useState } from "react";
 import { RepositoryStatus } from "../../enums/repository.enum";
 import { useAuth } from "../../context/AuthContext";
+import { useDocumentation } from "../../context/DocumentationContext";
+import { useNavigate } from "react-router-dom";
 
 function ActivityState({ data = [] }) {
-  
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const {documents} = useAuth()
+  const { documents } = useAuth();
+  const { setView, setSelectedRepo } = useDocumentation();
+  const navigate = useNavigate();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -24,6 +27,12 @@ function ActivityState({ data = [] }) {
       default:
         return "text-slate-600 bg-slate-50";
     }
+  };
+
+  const handleViewDocumentation = (repo: any) => {
+    setSelectedRepo(repo);
+    setView("details");
+    navigate("/documentation");
   };
 
   const formatDate = (dateStr: string) => {
@@ -126,7 +135,10 @@ function ActivityState({ data = [] }) {
               {formatDate(repo.updated)}
             </td>
             <td className="px-6 py-4 text-right">
-              <button className="text-slate-400 hover:text-blue-secondary transition-colors">
+              <button
+                onClick={() => handleViewDocumentation(repo)}
+                className="text-slate-400 hover:text-blue-secondary transition-colors cursor-pointer"
+              >
                 <span className="text-primary font-semibold hover:text-primary/80 transition-colors text-sm">
                   View Documentation
                 </span>

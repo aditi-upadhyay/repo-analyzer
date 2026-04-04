@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import axios from "axios";
+import { useDocumentation } from "../../context/DocumentationContext";
 
 interface NavItemProps {
     label: string;
@@ -22,6 +23,7 @@ const NavItem = ({ label, active, onClick }: NavItemProps) => (
 );
 
 const DocumentationView: React.FC = () => {
+    const { selectedRepo } = useDocumentation();
     const [markdown, setMarkdown] = useState<string>("");
     const [sections, setSections] = useState<{ id: string; label: string }[]>([]);
     const [activeSection, setActiveSection] = useState<string>("");
@@ -100,6 +102,12 @@ const DocumentationView: React.FC = () => {
             {/* Left Sidebar - Dynamic */}
             <div className="w-64 flex-shrink-0 border-r border-slate-100 flex flex-col p-6 gap-8 bg-slate-50/30">
                 <div className="flex flex-col gap-4 mt-12">
+                    {selectedRepo && (
+                        <div className="px-4 mb-4">
+                            <span className="text-[10px] font-bold text-blue-secondary uppercase tracking-widest">Selected Repo</span>
+                            <h3 className="text-sm font-bold text-slate-900 truncate">{selectedRepo.name}</h3>
+                        </div>
+                    )}
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Contents</span>
                     <nav className="flex flex-col">
                         {sections.map((section) => (

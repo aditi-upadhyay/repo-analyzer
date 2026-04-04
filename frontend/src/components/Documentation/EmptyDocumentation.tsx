@@ -1,8 +1,8 @@
-import { useState } from "react";
 import NewAnalysisModal from "../Modals/NewAnalysisModal";
+import { useDocumentation } from "../../context/DocumentationContext";
 
 function EmptyDocumentation() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { isModalOpen, setIsModalOpen } = useDocumentation();
     return (
         <div className="flex flex-col items-center justify-center h-full w-full bg-slate-50/50 p-8 relative overflow-hidden">
             <div className="absolute top-1/4 left-1/4 size-64 bg-blue-light/50 rounded-full blur-3xl -z-10 animate-pulse" />
@@ -38,8 +38,6 @@ function EmptyDocumentation() {
             </button>
 
             <NewAnalysisModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-
-
 
         </div>
     );

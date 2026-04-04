@@ -1,11 +1,12 @@
 import type { TableColumn } from "../../types/table";
 import Table from "../Table";
-import { useState } from "react";
 import NewAnalysisModal from "../Modals/NewAnalysisModal";
+import { useDocumentation } from "../../context/DocumentationContext";
+import { useNavigate } from "react-router-dom";
 
 function RepositoryState() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState("All Repositories");
+    const { isModalOpen, setIsModalOpen, activeTab, setActiveTab, setView, setSelectedRepo } = useDocumentation();
+    const navigate = useNavigate();
     const tabs = ["All Repositories", "Github", "Zip"];
 
     const repos: TableColumn[] = [
@@ -14,6 +15,13 @@ function RepositoryState() {
         { name: "data-pipeline-worker", status: "Analyzed", updated: "1 hour ago", color: "text-green-600 bg-green-50", action: "View Documentation" },
         { name: "legacy-payment-system", status: "Failed", updated: "Yesterday", color: "text-red-600 bg-red-50", action: "View Documentation" },
     ];
+
+    const handleViewDocumentation = (repo: any) => {
+        setSelectedRepo(repo);
+        setView("details");
+        navigate("/documentation");
+    };
+
     return (
         <div className="w-full flex p-6 flex-col gap-4">
             <div className="flex justify-between items-center">
@@ -59,7 +67,10 @@ function RepositoryState() {
                         </td>
                         <td className="px-6 py-4 text-sm text-slate-500">{repo.updated}</td>
                         <td className="px-6 py-4 text-right">
-                            <button className="text-slate-400 hover:text-blue-secondary transition-colors">
+                            <button
+                                onClick={() => handleViewDocumentation(repo)}
+                                className="text-slate-400 hover:text-blue-secondary transition-colors cursor-pointer"
+                            >
                                 <span className="text-primary font-semibold hover:text-primary/80 transition-colors text-sm">{repo.action}</span>
                             </button>
                         </td>
