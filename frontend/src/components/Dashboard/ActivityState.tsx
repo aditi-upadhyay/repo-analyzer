@@ -8,7 +8,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useDocumentation } from "../../context/DocumentationContext";
 import { useNavigate } from "react-router-dom";
 
-function ActivityState({ data = [] }) {
+function ActivityState({ data = [] }: { data?: any[] }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { documents } = useAuth();
   const { setView, setSelectedRepo } = useDocumentation();
