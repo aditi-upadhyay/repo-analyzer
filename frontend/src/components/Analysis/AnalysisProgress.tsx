@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { useSocket } from "../../hooks/useSocket";
 
 interface AnalysisStepProps {
@@ -37,32 +37,29 @@ const AnalysisStep = ({ label, status, time }: AnalysisStepProps) => {
 
   return (
     <div
-      className={`flex items-center justify-between py-3 ${
-        status === "pending" ? "opacity-50" : "opacity-100"
-      }`}
+      className={`flex items-center justify-between py-3 ${status === "pending" ? "opacity-50" : "opacity-100"
+        }`}
     >
       <div className="flex items-center gap-4">
         <div className="size-6 flex items-center justify-center">
           {getIcon()}
         </div>
         <span
-          className={`text-sm font-bold ${
-            status === "completed"
+          className={`text-sm font-bold ${status === "completed"
               ? "text-slate-700"
               : status === "running"
-              ? "text-slate-900"
-              : "text-slate-400"
-          }`}
+                ? "text-slate-900"
+                : "text-slate-400"
+            }`}
         >
           {label}
         </span>
       </div>
       <span
-        className={`text-xs font-bold font-mono ${
-          status === "running"
+        className={`text-xs font-bold font-mono ${status === "running"
             ? "text-blue-secondary animate-pulse"
             : "text-slate-400"
-        }`}
+          }`}
       >
         {status === "running" ? "running..." : time || "—"}
       </span>
@@ -143,7 +140,7 @@ const AnalysisProgress: React.FC = () => {
           if (index < currentStep) status = "completed";
           else if (index === currentStep) status = "running";
 
-          if (currentStep === STEPS.length - 1 && index === currentStep) {
+          if (currentStep === STEPS.length && index < STEPS.length) {
             status = "completed";
           }
 
@@ -152,6 +149,27 @@ const AnalysisProgress: React.FC = () => {
           );
         })}
       </div>
+
+      {currentStep >= STEPS.length && (
+        <div className="w-full max-w-md flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <Link
+            to="/documentation"
+            className="w-full py-4 bg-blue-secondary text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-blue-primary transition-all shadow-xl shadow-blue-600/20"
+          >
+            View Documentation
+            <span className="material-symbols-outlined text-lg">
+              description
+            </span>
+          </Link>
+          <Link
+            to="/dashboard"
+            className="w-full py-4 text-slate-500 font-bold flex items-center justify-center gap-2 hover:text-slate-700 transition-all border border-slate-200 rounded-2xl"
+          >
+            Back to Dashboard
+            <span className="material-symbols-outlined text-lg">dashboard</span>
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

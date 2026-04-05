@@ -10,6 +10,7 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("GitHub URL");
   const [repoUrl, setRepoUrl] = useState("");
+  const [accessToken, setAccessToken] = useState("");
   const tabs = [
     { name: "GitHub URL", icon: "link" },
     { name: "Upload ZIP", icon: "upload_file" },
@@ -24,6 +25,7 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
       const response = await axios.post("http://127.0.0.1:8000/analyze", {
         repo_url: repoUrl,
         session_id: sessionId,
+        access_token: accessToken || "",
       });
       console.log(response);
       onClose();
@@ -69,11 +71,10 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
             <button
               key={tab.name}
               onClick={() => setActiveTab(tab.name)}
-              className={`flex items-center gap-2 py-4 border-b-2 transition-all cursor-pointer font-bold text-sm ${
-                activeTab === tab.name
-                  ? "border-blue-secondary text-blue-secondary"
-                  : "border-transparent text-slate-400 hover:text-slate-600"
-              }`}
+              className={`flex items-center gap-2 py-4 border-b-2 transition-all cursor-pointer font-bold text-sm ${activeTab === tab.name
+                ? "border-blue-secondary text-blue-secondary"
+                : "border-transparent text-slate-400 hover:text-slate-600"
+                }`}
             >
               <span className="material-symbols-outlined text-lg">
                 {tab.icon}
@@ -104,6 +105,8 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
                 </label>
                 <input
                   type="password"
+                  value={accessToken}
+                  onChange={(e) => setAccessToken(e.target.value)}
                   placeholder="ghp_xxxxxxxxxxxx"
                   className="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-blue-secondary/30 focus:bg-white transition-all text-slate-700 placeholder:text-slate-300 font-medium"
                 />
@@ -191,19 +194,17 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
             disabled={!repoUrl.trim()}
             onClick={handleAnalyze}
             className={`flex items-center gap-2 text-white py-3 px-8 rounded-2xl font-bold
-    ${
-      repoUrl.trim()
-        ? "bg-blue-secondary hover:bg-blue-primary shadow-xl shadow-blue-600/20 transition-all cursor-pointer group"
-        : "bg-blue-secondary opacity-50 cursor-not-allowed"
-    }`}
+    ${repoUrl.trim()
+                ? "bg-blue-secondary hover:bg-blue-primary shadow-xl shadow-blue-600/20 transition-all cursor-pointer group"
+                : "bg-blue-secondary opacity-50 cursor-not-allowed"
+              }`}
           >
             Analyze repository
             <span
               className={`material-symbols-outlined text-lg 
-                ${
-                  repoUrl.trim()
-                    ? "group-hover:translate-x-1 transition-transform"
-                    : ""
+                ${repoUrl.trim()
+                  ? "group-hover:translate-x-1 transition-transform"
+                  : ""
                 }`}
             >
               arrow_forward

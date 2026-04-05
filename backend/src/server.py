@@ -12,6 +12,7 @@ from .routes.user import router as user_router
 from .routes.auth import router as auth_router
 from .routes.config import router as config_router
 from .routes.document import router as document_router
+from typing import Optional
 
 try:
     sessions.insert_one({"test": "hello"})
@@ -36,6 +37,7 @@ app.add_middleware(
 class RepoRequest(BaseModel):
     repo_url: str
     session_id: str 
+    access_token: Optional[str] = None
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -77,7 +79,7 @@ def get_documentation():
 @app.post("/analyze")
 async def analyze_repo(data: RepoRequest, background_tasks: BackgroundTasks):
     background_tasks.add_task(startAnalyzing, data.repo_url,
-        data.session_id)
+        data.session_id, data.access_token)
     return {"status": "Analysis started", "session_id": data.session_id}
 
 # uvicorn src.server:app --reload

@@ -12,13 +12,23 @@ REPO_URL = "https://gitlab.com/FlairLabs/Clients/bv/augmented-surveyor.git"
 CLONE_DIR = "./repo"
 # manager is now imported from ..core.connection_shared
 
-def clone_repository(repo_url: str, clone_dir: str):
+def clone_repository(repo_url: str, clone_dir: str, access_token: str = None):
     if os.path.exists(clone_dir):
         print(f"Removing existing directory: {clone_dir}")
         shutil.rmtree(clone_dir)
     
+    auth_url = repo_url
+    if access_token:
+        # Assuming GitHub-style URL: https://github.com/user/repo.git
+        # If it's already got a token, we might need more complex parsing, 
+        # but for now, let's insert it.
+        if "github.com" in repo_url:
+            auth_url = repo_url.replace("https://", f"https://{access_token}@")
+        elif "gitlab.com" in repo_url:
+             auth_url = repo_url.replace("https://", f"https://oauth2:{access_token}@")
+
     print(f"Cloning repository: {repo_url} into {clone_dir}")
-    Repo.clone_from(repo_url, clone_dir)
+    Repo.clone_from(auth_url, clone_dir)
     print("Repository cloned.\n")
 
 
@@ -43,7 +53,7 @@ def main():
 
         # print(docs)
 
-async def startAnalyzing(url: str, session_id: str):
+async def startAnalyzing(url: str, session_id: str, access_token: str = None):
     clone_dir = f"./repo_{session_id}"
     
     # Wait for websocket to connect (up to 5 seconds)
@@ -57,7 +67,7 @@ async def startAnalyzing(url: str, session_id: str):
 
     try:
         await manager.send_message(session_id, "CLONING: Cloning repository...")
-        await asyncio.to_thread(clone_repository, url, clone_dir)
+        await asyncio.to_thread(clone_repository, url, clone_dir, access_token)
 
         await manager.send_message(session_id, "SCANNING: Scanning repository...")
         print("Scanning repository...\n")
