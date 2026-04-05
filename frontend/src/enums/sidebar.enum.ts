@@ -20,20 +20,5 @@ export const SidebarItem = [
         icon: "description",
         route: "/documentation",
     },
-    // {
-    //     title: "Insights",
-    //     icon: "insights",
-    //     route: "/insights",
-    // },
-    // {
-    //     title: "Search",
-    //     icon: "search",
-    //     route: "/search",
-    // },
-    {
-        title: "Chat",
-        icon: "chat",
-        route: "/chat",
-    },
 
 ];

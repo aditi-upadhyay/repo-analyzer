@@ -22,7 +22,6 @@ function App() {
         <Route path="repositories" element={<Repository />} />
         <Route path="documentation" element={<Documentation />} />
         <Route path="analysis" element={<AnalysisProgress />} />
-        <Route path="chat" element={<div className="p-8">Chat Page (Work in Progress)</div>} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Route>
       <Route path="signup" element={<LandingPage />} />

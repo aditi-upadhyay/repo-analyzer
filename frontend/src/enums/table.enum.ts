@@ -30,10 +30,4 @@ export const Table = [
         icon: "search",
         route: "/search",
     },
-    {
-        title: "Chat",
-        icon: "chat",
-        route: "/chat",
-    },
-
 ];
