@@ -33,7 +33,7 @@ class RepositoryService:
             raise HTTPException(status_code=400, detail=f"Schema validation failed: {str(e)}")
 
         repo_data["createdAt"] = datetime.utcnow()
-        repo_data["lastAnalyzedAt"] = None
+        repo_data["updatedAt"] = datetime.utcnow()
         
         # Standardize to user_id and ObjectId
         u_id = repo_data.get("user_id") or repo_data.get("userId") or repo_data.get("user_Id")

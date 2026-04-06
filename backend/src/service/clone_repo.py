@@ -53,7 +53,7 @@ def main():
 
         # print(docs)
 
-async def startAnalyzing(url: str, session_id: str, access_token: str = None):
+async def startAnalyzing(url: str, session_id: str, access_token: str = None, repo_id: str = None):
     clone_dir = f"./repo_{session_id}"
     
     # Wait for websocket to connect (up to 5 seconds)
@@ -66,6 +66,13 @@ async def startAnalyzing(url: str, session_id: str, access_token: str = None):
         print(f"⚠️ Warning: WebSocket for session {session_id} not connected after timeout")
 
     try:
+        if repo_id:
+            from .repository_service import RepositoryService
+            from datetime import datetime
+            RepositoryService.update_repository(repo_id, {
+                "status": "processing",
+                "updatedAt": datetime.utcnow()
+            })
         await manager.send_message(session_id, "CLONING: Cloning repository...")
         await asyncio.to_thread(clone_repository, url, clone_dir, access_token)
 
@@ -86,6 +93,15 @@ async def startAnalyzing(url: str, session_id: str, access_token: str = None):
         
         await manager.send_message(session_id, "GENERATING: Documentation generated successfully")
         await manager.send_message(session_id, "GENERATED: Process complete")
+
+        # Update repository status to completed
+        if repo_id:
+            from .repository_service import RepositoryService
+            from datetime import datetime
+            RepositoryService.update_repository(repo_id, {
+                "status": "completed",
+                "updatedAt": datetime.utcnow()
+            })
         
     except Exception as e:
         print(f"Error during analysis: {e}")

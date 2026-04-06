@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
 interface NewAnalysisModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -8,6 +9,7 @@ interface NewAnalysisModalProps {
 
 function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("GitHub URL");
   const [repoUrl, setRepoUrl] = useState("");
   const [accessToken, setAccessToken] = useState("");
@@ -26,6 +28,7 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
         repo_url: repoUrl,
         session_id: sessionId,
         access_token: accessToken || "",
+        user_id: user?._id || null,
       });
       console.log(response);
       onClose();

@@ -4,6 +4,7 @@ import logging
 import sys
 from fastapi.middleware.cors import CORSMiddleware
 from .service.clone_repo import startAnalyzing, test
+from .service.repository_service import RepositoryService
 from pydantic import BaseModel
 from .core.connection_shared import manager
 from .config.db import sessions
@@ -38,6 +39,7 @@ class RepoRequest(BaseModel):
     repo_url: str
     session_id: str 
     access_token: Optional[str] = None
+    user_id: Optional[str] = None
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -78,8 +80,21 @@ def get_documentation():
 
 @app.post("/analyze")
 async def analyze_repo(data: RepoRequest, background_tasks: BackgroundTasks):
+    # Parse repo name from URL
+    repo_name = data.repo_url.split("/")[-1].replace(".git", "")
+    
+    # Create entry in repository table
+    repo_entry = {
+        "name": repo_name,
+        "repoUrl": data.repo_url,
+        "user_id": data.user_id,
+        "status": "pending",
+        "sourceType": "github" if "github.com" in data.repo_url else "gitlab" if "gitlab.com" in data.repo_url else "other"
+    }
+    new_repo = RepositoryService.create_repository(repo_entry)
+
     background_tasks.add_task(startAnalyzing, data.repo_url,
-        data.session_id, data.access_token)
+        data.session_id, data.access_token, new_repo["_id"])
     return {"status": "Analysis started", "session_id": data.session_id}
 
 # uvicorn src.server:app --reload

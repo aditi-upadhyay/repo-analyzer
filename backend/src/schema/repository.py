@@ -17,11 +17,11 @@ class RepositoryUpdate(BaseModel):
     repoUrl: Optional[str] = None
     sourceType: Optional[str] = None
     status: Optional[str] = None
-    lastAnalyzedAt: Optional[datetime] = None
+    updatedAt: Optional[datetime] = None
 
 class RepositoryResponse(RepositoryBase):
     id: str = Field(alias="_id")
-    lastAnalyzedAt: Optional[datetime] = None
+    updatedAt: Optional[datetime] = None
     createdAt: datetime
     # Fields expected by the frontend for UI display
     color: Optional[str] = "text-slate-600 bg-slate-50"
