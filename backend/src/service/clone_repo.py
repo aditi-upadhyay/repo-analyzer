@@ -120,7 +120,22 @@ async def startAnalyzing(url: str, session_id: str, access_token: str = None, re
 
     except Exception as e:
         print(f"Error during analysis: {e}")
+        
+        # Update repository status to failed
+        if repo_id:
+            try:
+                from .repository_service import RepositoryService
+                from datetime import datetime
+                RepositoryService.update_repository(repo_id, {
+                    "status": "failed",
+                    "updatedAt": datetime.utcnow()
+                })
+                print(f"Update status to failed for repo {repo_id}")
+            except Exception as update_err:
+                print(f"❌ Failed to update repository status to failed: {update_err}")
+
         await manager.send_message(session_id, f"ERROR: {str(e)}")
+
     finally:
         # Optional: cleanup clone_dir
         # if os.path.exists(clone_dir):

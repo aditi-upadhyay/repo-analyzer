@@ -83,10 +83,16 @@ const AnalysisProgress: React.FC = () => {
   const { messages } = useSocket(sessionId || "");
 
   const [currentStep, setCurrentStep] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
     if (!lastMessage) return;
+
+    if (lastMessage.startsWith("ERROR:")) {
+      setError(lastMessage.replace("ERROR:", "").trim());
+      return;
+    }
 
     const stepKey = lastMessage.split(":")[0];
 
@@ -113,44 +119,67 @@ const AnalysisProgress: React.FC = () => {
     <div className="flex flex-col items-center justify-center py-20 px-6 max-w-2xl mx-auto space-y-12">
       <div className="text-center space-y-2">
         <h2 className="text-3xl font-black text-slate-900">
-          Analyzing your repository
+          {error ? "Analysis Failed" : "Analyzing your repository"}
         </h2>
         <p className="text-slate-500">
-          AI is scanning files and generating documentation
+          {error ? "We encountered an issue during the analysis" : "AI is scanning files and generating documentation"}
         </p>
       </div>
 
-      <div className="w-full max-w-md space-y-4">
-        <div className="relative h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-          <div
-            className="absolute top-0 left-0 h-full bg-blue-secondary transition-all duration-700"
-            style={{ width: `${progress}%` }}
-          />
+      {error ? (
+        <div className="w-full max-w-md p-6 bg-red-50 border border-red-100 rounded-3xl space-y-4 animate-in fade-in zoom-in duration-300">
+          <div className="flex items-center gap-3 text-red-600">
+            <span className="material-symbols-outlined font-bold">error</span>
+            <span className="font-bold">Error during analysis</span>
+          </div>
+          <p className="text-sm text-red-800 leading-relaxed font-medium">
+            {error}
+          </p>
+          <div className="pt-2">
+            <Link
+              to="/dashboard"
+              className="flex items-center justify-center gap-2 w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold transition-all shadow-lg shadow-red-600/20"
+            >
+              Back to Dashboard
+              <span className="material-symbols-outlined text-lg">dashboard</span>
+            </Link>
+          </div>
         </div>
+      ) : (
+        <>
+          <div className="w-full max-w-md space-y-4">
+            <div className="relative h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div
+                className="absolute top-0 left-0 h-full bg-blue-secondary transition-all duration-700"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
 
-        <div className="flex justify-end">
-          <span className="text-xs font-bold text-slate-400">{progress}%</span>
-        </div>
-      </div>
+            <div className="flex justify-end">
+              <span className="text-xs font-bold text-slate-400">{progress}%</span>
+            </div>
+          </div>
 
-      <div className="w-full max-w-md divide-y divide-slate-50">
-        {STEPS.map((step, index) => {
-          let status: "completed" | "running" | "pending" = "pending";
+          <div className="w-full max-w-md divide-y divide-slate-50">
+            {STEPS.map((step, index) => {
+              let status: "completed" | "running" | "pending" = "pending";
 
-          if (index < currentStep) status = "completed";
-          else if (index === currentStep) status = "running";
+              if (index < currentStep) status = "completed";
+              else if (index === currentStep) status = "running";
 
-          if (currentStep === STEPS.length && index < STEPS.length) {
-            status = "completed";
-          }
+              if (currentStep === STEPS.length && index < STEPS.length) {
+                status = "completed";
+              }
 
-          return (
-            <AnalysisStep key={step.key} label={step.label} status={status} />
-          );
-        })}
-      </div>
+              return (
+                <AnalysisStep key={step.key} label={step.label} status={status} />
+              );
+            })}
+          </div>
+        </>
+      )}
 
-      {currentStep >= STEPS.length && (
+      {currentStep >= STEPS.length && !error && (
         <div className="w-full max-w-md flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <Link
             to="/documentation"

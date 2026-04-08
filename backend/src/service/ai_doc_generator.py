@@ -114,19 +114,28 @@ Generate structured documentation with the following sections:
 Return the output in **clean Markdown format**.
 """
 
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt
-    )
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
 
-    documentation = response.text
+        documentation = response.text
 
-    # Save documentation file
-    save_path = "PROJECT_DOCUMENTATION.md"
+        # Save documentation file
+        save_path = "PROJECT_DOCUMENTATION.md"
 
-    with open(save_path, "w", encoding="utf-8") as f:
-        f.write(documentation)
+        with open(save_path, "w", encoding="utf-8") as f:
+            f.write(documentation)
 
-    print(f"\nDocumentation saved to {save_path}")
+        print(f"\nDocumentation saved to {save_path}")
 
-    return documentation
+        return documentation
+
+    except Exception as e:
+        print(f"❌ Gemini API Error: {e}")
+        # Re-raise with a more descriptive message if it's a 503
+        error_msg = str(e)
+        if "503" in error_msg or "UNAVAILABLE" in error_msg:
+             raise Exception("The AI model is currently experiencing high demand. Please try again in a few moments.")
+        raise Exception(f"AI Generation failed: {error_msg}")
