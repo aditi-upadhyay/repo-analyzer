@@ -94,7 +94,7 @@ async def analyze_repo(data: RepoRequest, background_tasks: BackgroundTasks):
     new_repo = RepositoryService.create_repository(repo_entry)
 
     background_tasks.add_task(startAnalyzing, data.repo_url,
-        data.session_id, data.access_token, new_repo["_id"])
+        data.session_id, data.access_token, new_repo["_id"], data.user_id)
     return {"status": "Analysis started", "session_id": data.session_id}
 
 # uvicorn src.server:app --reload

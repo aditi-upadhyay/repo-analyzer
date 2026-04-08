@@ -5,6 +5,7 @@ import shutil
 
 from .extract_functions import scan_repository
 from .ai_doc_generator import generate_documentation
+from .document_service import DocumentService
 from ..core.connection_shared import manager
 # REPO_URL = "https://github.com/aditi-upadhyay/fenrir-security-assessment.git"
 REPO_URL = "https://gitlab.com/FlairLabs/Clients/bv/augmented-surveyor.git"
@@ -53,7 +54,7 @@ def main():
 
         # print(docs)
 
-async def startAnalyzing(url: str, session_id: str, access_token: str = None, repo_id: str = None):
+async def startAnalyzing(url: str, session_id: str, access_token: str = None, repo_id: str = None, user_id: str = None):
     clone_dir = f"./repo_{session_id}"
     
     # Wait for websocket to connect (up to 5 seconds)
@@ -103,6 +104,20 @@ async def startAnalyzing(url: str, session_id: str, access_token: str = None, re
                 "updatedAt": datetime.utcnow()
             })
         
+        # Save generated documentation to database
+        if repo_id and user_id:
+            try:
+                doc_entry = {
+                    "repository_id": str(repo_id),
+                    "user_id": str(user_id),
+                    "content": documentation,
+                    "status": "Completed"
+                }
+                DocumentService.create_document(doc_entry)
+                print(f"✅ Documentation saved to DB for repo {repo_id}")
+            except Exception as e:
+                print(f"❌ Failed to save documentation to DB: {e}")
+
     except Exception as e:
         print(f"Error during analysis: {e}")
         await manager.send_message(session_id, f"ERROR: {str(e)}")
