@@ -46,10 +46,10 @@ const AnalysisStep = ({ label, status, time }: AnalysisStepProps) => {
         </div>
         <span
           className={`text-sm font-bold ${status === "completed"
-              ? "text-slate-700"
-              : status === "running"
-                ? "text-slate-900"
-                : "text-slate-400"
+            ? "text-slate-700"
+            : status === "running"
+              ? "text-slate-900"
+              : "text-slate-400"
             }`}
         >
           {label}
@@ -57,8 +57,8 @@ const AnalysisStep = ({ label, status, time }: AnalysisStepProps) => {
       </div>
       <span
         className={`text-xs font-bold font-mono ${status === "running"
-            ? "text-blue-secondary animate-pulse"
-            : "text-slate-400"
+          ? "text-blue-secondary animate-pulse"
+          : "text-slate-400"
           }`}
       >
         {status === "running" ? "running..." : time || "—"}
@@ -127,21 +127,82 @@ const AnalysisProgress: React.FC = () => {
       </div>
 
       {error ? (
-        <div className="w-full max-w-md p-6 bg-red-50 border border-red-100 rounded-3xl space-y-4 animate-in fade-in zoom-in duration-300">
-          <div className="flex items-center gap-3 text-red-600">
-            <span className="material-symbols-outlined font-bold">error</span>
-            <span className="font-bold">Error during analysis</span>
+        <div className="w-full max-w-xl space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="flex flex-col items-center text-center space-y-4">
+            <div className="size-20 bg-red-50 rounded-full flex items-center justify-center border-4 border-white shadow-xl shadow-red-500/10">
+              <span className="material-symbols-outlined text-red-500 text-4xl font-black">
+                priority_high
+              </span>
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-4xl font-black text-slate-900 tracking-tight">
+                Analysis failed
+              </h2>
+              <p className="text-slate-500 font-medium max-w-sm mx-auto leading-relaxed">
+                The AI model is experiencing high demand. Your repository is safe — this is a temporary issue.
+              </p>
+            </div>
           </div>
-          <p className="text-sm text-red-800 leading-relaxed font-medium">
-            {error}
-          </p>
-          <div className="pt-2">
+
+          <div className="bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/50">
+            <div className="p-6 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="size-2 bg-red-500 rounded-full animate-pulse" />
+                <span className="text-sm font-bold text-slate-900">Error details</span>
+              </div>
+              <span className="text-[10px] font-black font-mono text-slate-400 tracking-widest uppercase">
+                {error.includes("high demand") ? "ERR_MODEL_OVERLOADED" : "ERR_ANALYSIS_FAILED"}
+              </span>
+            </div>
+
+            <div className="p-8 space-y-6">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-bold text-slate-400">Triggered at</span>
+                <span className="text-sm font-bold text-slate-900 font-mono">
+                  today, {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-bold text-slate-400">Repository</span>
+                <span className="text-sm font-bold text-slate-900">
+                  {location.state?.repoName || "unknown-repo"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-bold text-slate-400">Status</span>
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-red-50 border border-red-100/50 rounded-full text-red-600">
+                  <div className="size-1.5 bg-red-600 rounded-full" />
+                  <span className="text-[10px] font-black uppercase tracking-wider">Failed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-amber-50/50 border border-amber-100 p-6 rounded-3xl flex gap-4 items-start">
+            <div className="size-10 bg-amber-100/50 rounded-2xl flex items-center justify-center text-amber-600 flex-shrink-0 border border-amber-200/50">
+              <span className="material-symbols-outlined text-xl">warning</span>
+            </div>
+            <div>
+              <p className="text-sm text-amber-900/80 font-bold leading-relaxed">
+                Queue times are elevated right now. Retrying usually resolves this within a minute or two.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <button
+              onClick={() => window.location.reload()}
+              className="flex-1 py-4 bg-slate-100 text-slate-700 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-slate-200 transition-all border border-slate-200/50"
+            >
+              <span className="material-symbols-outlined text-lg">refresh</span>
+              Retry analysis
+            </button>
             <Link
               to="/dashboard"
-              className="flex items-center justify-center gap-2 w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-bold transition-all shadow-lg shadow-red-600/20"
+              className="flex-1 py-4 bg-blue-secondary text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-blue-primary transition-all shadow-xl shadow-blue-600/20"
             >
-              Back to Dashboard
-              <span className="material-symbols-outlined text-lg">dashboard</span>
+              Back to dashboard
+              <span className="material-symbols-outlined text-lg">arrow_outward</span>
             </Link>
           </div>
         </div>

@@ -31,9 +31,10 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
         user_id: user?._id || null,
       });
       console.log(response);
+      const repoName = repoUrl.split("/").pop()?.replace(".git", "") || "unknown-repo";
       onClose();
       navigate("/analysis", {
-        state: { sessionId },
+        state: { sessionId, repoUrl, repoName },
       });
     } catch (error) {
       console.error(error);
