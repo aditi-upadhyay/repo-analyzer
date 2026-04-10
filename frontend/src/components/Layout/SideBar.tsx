@@ -1,7 +1,9 @@
 import Button from "../Button";
 import { SidebarItem } from "../../enums/sidebar.enum";
+import { useAuth } from "../../context/AuthContext";
 
 function SideBar() {
+    const { user } = useAuth();
     return (
         <div className="h-full flex flex-col  gap-6 bg-white border-r border-slate-200 p-6">
 
@@ -42,8 +44,7 @@ function SideBar() {
                     </div>
 
                     <div className="flex flex-col">
-                        <span className="text-sm font-medium">Aditi</span>
-                        <span className="text-xs text-slate-500">Developer</span>
+                        <span className="text-sm font-medium">{user?.fullName || user?.username || "Guest"}</span>
                     </div>
 
                 </div>
