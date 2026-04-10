@@ -37,10 +37,18 @@ function SideBar() {
             <div className="">
                 <div className="flex items-center gap-3">
 
-                    <div className="size-8 bg-slate-200 rounded-full flex items-center justify-center">
-                        <span className="material-symbols-outlined text-sm">
-                            person
-                        </span>
+                    <div className="size-8 bg-slate-200 rounded-full flex items-center justify-center overflow-hidden">
+                        {user?.avatarUrl ? (
+                            <img
+                                src={user.avatarUrl}
+                                alt={user.fullName || user.username}
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <span className="material-symbols-outlined text-sm">
+                                person
+                            </span>
+                        )}
                     </div>
 
                     <div className="flex flex-col">
