@@ -16,7 +16,7 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={user ? <Layout /> : <Navigate to="/login" replace />}>
+      <Route path="/" element={user ? <Layout /> : <LoginPage />}>
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="repositories" element={<Repository />} />
