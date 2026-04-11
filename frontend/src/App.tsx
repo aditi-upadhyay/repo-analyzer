@@ -11,6 +11,7 @@ function App() {
   const { user, loading } = useAuth();
 
   if (loading) {
+    console.log("loading");
     return <div className="h-screen w-screen flex items-center justify-center bg-[#0B0F1A] text-white">Loading...</div>;
   }
 
