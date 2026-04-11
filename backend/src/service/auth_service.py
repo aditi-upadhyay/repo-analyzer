@@ -5,7 +5,7 @@ from google.auth.transport import requests
 from ..config.db import user_collection
 from ..service.user_service import UserService
 
-# GOOGLE_CLIENT_ID = os.getenv("VITE_GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_ID = os.getenv("VITE_GOOGLE_CLIENT_ID")
 
 class AuthService:
     @staticmethod
