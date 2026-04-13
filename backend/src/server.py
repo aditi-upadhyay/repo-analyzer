@@ -1,9 +1,9 @@
-from fastapi import FastAPI, BackgroundTasks, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, BackgroundTasks, WebSocket, WebSocketDisconnect, File, UploadFile, Form
 import urllib.request
 import logging
 import sys
 from fastapi.middleware.cors import CORSMiddleware
-from .service.clone_repo import startAnalyzing, test
+from .service.clone_repo import startAnalyzing, startAnalyzingZip, test
 from .service.repository_service import RepositoryService
 from pydantic import BaseModel
 from .core.connection_shared import manager
@@ -96,5 +96,42 @@ async def analyze_repo(data: RepoRequest, background_tasks: BackgroundTasks):
     background_tasks.add_task(startAnalyzing, data.repo_url,
         data.session_id, data.access_token, new_repo["_id"], data.user_id)
     return {"status": "Analysis started", "session_id": data.session_id}
+
+@app.post("/analyze-zip")
+async def analyze_zip(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    session_id: str = Form(...),
+    user_id: Optional[str] = Form(None)
+):
+    import shutil
+    import os
+    
+    # Create temp directory if not exists
+    temp_dir = "./temp_uploads"
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
+        
+    file_path = os.path.join(temp_dir, f"{session_id}_{file.filename}")
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+        
+    repo_name = file.filename.rsplit(".", 1)[0]
+    
+    # Create entry in repository table
+    repo_entry = {
+        "name": repo_name,
+        "repoUrl": "uploaded_zip",
+        "user_id": user_id,
+        "status": "pending",
+        "sourceType": "zip"
+    }
+    new_repo = RepositoryService.create_repository(repo_entry)
+
+    background_tasks.add_task(startAnalyzingZip, file_path,
+        session_id, new_repo["_id"], user_id)
+        
+    return {"status": "Analysis started", "session_id": session_id}
 
 # uvicorn src.server:app --reload
