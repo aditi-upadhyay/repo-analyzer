@@ -1,7 +1,7 @@
-from git import Repo
 import os
 import asyncio
 import shutil
+import zipfile
 
 from .extract_functions import scan_repository
 from .ai_doc_generator import generate_documentation
@@ -54,18 +54,7 @@ def main():
 
         # print(docs)
 
-async def startAnalyzing(url: str, session_id: str, access_token: str = None, repo_id: str = None, user_id: str = None):
-    clone_dir = f"./repo_{session_id}"
-    
-    # Wait for websocket to connect (up to 5 seconds)
-    for _ in range(10):
-        if session_id in manager.active_connections:
-            print(f"📡 WebSocket connected for session {session_id}")
-            break
-        await asyncio.sleep(0.5)
-    else:
-        print(f"⚠️ Warning: WebSocket for session {session_id} not connected after timeout")
-
+async def _run_analysis_pipeline(clone_dir: str, session_id: str, repo_id: str = None, user_id: str = None, documentation: str = None):
     try:
         if repo_id:
             from .repository_service import RepositoryService
@@ -74,28 +63,22 @@ async def startAnalyzing(url: str, session_id: str, access_token: str = None, re
                 "status": "processing",
                 "updatedAt": datetime.utcnow()
             })
-        await manager.send_message(session_id, "CLONING: Cloning repository...")
-        await asyncio.to_thread(clone_repository, url, clone_dir, access_token)
-
+        
         await manager.send_message(session_id, "SCANNING: Scanning repository...")
         print("Scanning repository...\n")
         functions = await asyncio.to_thread(scan_repository, clone_dir)
 
-        await manager.send_message(session_id, f"EXTRACTING: extracting functions")
-        # print(f"Total functions found: {len(functions)}")
-
+        await manager.send_message(session_id, "EXTRACTING: extracting functions")
+        
         await manager.send_message(session_id, "AI: Generating documentation...")
         print("\nGenerating documentation...\n")
         
-        # Mapping functions to just names for the generator
         function_names = [f["name"] for f in functions]
-        
         documentation = await asyncio.to_thread(generate_documentation, function_names, clone_dir)
         
         await manager.send_message(session_id, "GENERATING: Documentation generated successfully")
         await manager.send_message(session_id, "GENERATED: Process complete")
 
-        # Update repository status to completed
         if repo_id:
             from .repository_service import RepositoryService
             from datetime import datetime
@@ -104,7 +87,6 @@ async def startAnalyzing(url: str, session_id: str, access_token: str = None, re
                 "updatedAt": datetime.utcnow()
             })
         
-        # Save generated documentation to database
         if repo_id and user_id:
             try:
                 doc_entry = {
@@ -120,8 +102,6 @@ async def startAnalyzing(url: str, session_id: str, access_token: str = None, re
 
     except Exception as e:
         print(f"Error during analysis: {e}")
-        
-        # Update repository status to failed
         if repo_id:
             try:
                 from .repository_service import RepositoryService
@@ -130,17 +110,64 @@ async def startAnalyzing(url: str, session_id: str, access_token: str = None, re
                     "status": "failed",
                     "updatedAt": datetime.utcnow()
                 })
-                print(f"Update status to failed for repo {repo_id}")
             except Exception as update_err:
                 print(f"❌ Failed to update repository status to failed: {update_err}")
 
         await manager.send_message(session_id, f"ERROR: {str(e)}")
 
+async def startAnalyzing(url: str, session_id: str, access_token: str = None, repo_id: str = None, user_id: str = None):
+    from git import Repo
+    clone_dir = f"./repo_{session_id}"
+    
+    # Wait for websocket to connect (up to 5 seconds)
+    for _ in range(10):
+        if session_id in manager.active_connections:
+            print(f"📡 WebSocket connected for session {session_id}")
+            break
+        await asyncio.sleep(0.5)
+    else:
+        print(f"⚠️ Warning: WebSocket for session {session_id} not connected after timeout")
+
+    try:
+        await manager.send_message(session_id, "CLONING: Cloning repository...")
+        await asyncio.to_thread(clone_repository, url, clone_dir, access_token)
+        await _run_analysis_pipeline(clone_dir, session_id, repo_id, user_id)
+    except Exception as e:
+        print(f"Error during cloning: {e}")
+        await manager.send_message(session_id, f"ERROR: {str(e)}")
+
+async def startAnalyzingZip(zip_path: str, session_id: str, repo_id: str = None, user_id: str = None):
+    clone_dir = f"./repo_{session_id}"
+    
+    # Wait for websocket to connect
+    for _ in range(10):
+        if session_id in manager.active_connections:
+            break
+        await asyncio.sleep(0.5)
+
+    try:
+        await manager.send_message(session_id, "EXTRACTING: Extracting archive...")
+        
+        if os.path.exists(clone_dir):
+            shutil.rmtree(clone_dir)
+        os.makedirs(clone_dir)
+
+        if zip_path.endswith('.zip'):
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall(clone_dir)
+        elif zip_path.endswith(('.tar.gz', '.tgz')):
+            import tarfile
+            with tarfile.open(zip_path, 'r:gz') as tar_ref:
+                tar_ref.extractall(clone_dir)
+        
+        await _run_analysis_pipeline(clone_dir, session_id, repo_id, user_id)
+        
+    except Exception as e:
+        print(f"Error during extraction: {e}")
+        await manager.send_message(session_id, f"ERROR: {str(e)}")
     finally:
-        # Optional: cleanup clone_dir
-        # if os.path.exists(clone_dir):
-        #     shutil.rmtree(clone_dir)
-        pass
+        if os.path.exists(zip_path):
+            os.remove(zip_path)
 
 
 async def test(url: str, session_id: str):
