@@ -13,6 +13,7 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
   const [activeTab, setActiveTab] = useState("GitHub URL");
   const [repoUrl, setRepoUrl] = useState("");
   const [accessToken, setAccessToken] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const tabs = [
     { name: "GitHub URL", icon: "link" },
     { name: "Upload ZIP", icon: "upload_file" },
@@ -24,17 +25,33 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
   const handleAnalyze = async () => {
     try {
       const sessionId = crypto.randomUUID();
-      const response = await axios.post("http://127.0.0.1:8000/analyze", {
-        repo_url: repoUrl,
-        session_id: sessionId,
-        access_token: accessToken || "",
-        user_id: user?._id || null,
-      });
-      console.log(response);
-      const repoName = repoUrl.split("/").pop()?.replace(".git", "") || "unknown-repo";
+      let repoName = "unknown-repo";
+
+      if (activeTab === "Upload ZIP" && selectedFile) {
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+        formData.append("session_id", sessionId);
+        if (user?._id) formData.append("user_id", user._id);
+
+        await axios.post("http://127.0.0.1:8000/analyze-zip", formData, {
+          headers: {
+            "Content-Type": "multipart-form-data",
+          },
+        });
+        repoName = selectedFile.name.split(".")[0];
+      } else {
+        await axios.post("http://127.0.0.1:8000/analyze", {
+          repo_url: repoUrl,
+          session_id: sessionId,
+          access_token: accessToken || "",
+          user_id: user?._id || null,
+        });
+        repoName = repoUrl.split("/").pop()?.replace(".git", "") || "unknown-repo";
+      }
+
       onClose();
       navigate("/analysis", {
-        state: { sessionId, repoUrl, repoName },
+        state: { sessionId, repoUrl: activeTab === "Upload ZIP" ? "Uploaded ZIP" : repoUrl, repoName },
       });
     } catch (error) {
       console.error(error);
@@ -126,21 +143,30 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                 Upload Archive
               </label>
-              <div className="border-2 border-dashed border-slate-200 rounded-[2rem] p-12 flex flex-col items-center justify-center gap-4 bg-slate-50/50 hover:bg-white hover:border-blue-secondary/30 transition-all cursor-pointer group">
+              <div
+                onClick={() => document.getElementById("zip-upload")?.click()}
+                className="border-2 border-dashed border-slate-200 rounded-[2rem] p-12 flex flex-col items-center justify-center gap-4 bg-slate-50/50 hover:bg-white hover:border-blue-secondary/30 transition-all cursor-pointer group"
+              >
                 <div className="size-16 bg-white rounded-2xl shadow-lg flex items-center justify-center text-blue-secondary group-hover:scale-110 transition-transform">
                   <span className="material-symbols-outlined text-4xl">
-                    cloud_upload
+                    {selectedFile ? "check_circle" : "cloud_upload"}
                   </span>
                 </div>
                 <div className="text-center">
                   <p className="text-slate-700 font-bold">
-                    Click to upload or drag and drop
+                    {selectedFile ? selectedFile.name : "Click to upload or drag and drop"}
                   </p>
                   <p className="text-slate-400 text-sm font-medium">
                     ZIP, TAR.GZ (Max. 500MB)
                   </p>
                 </div>
-                <input type="file" className="hidden" accept=".zip,.tar.gz" />
+                <input
+                  id="zip-upload"
+                  type="file"
+                  className="hidden"
+                  accept=".zip,.tar.gz,.tgz"
+                  onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                />
               </div>
             </div>
           )}
@@ -195,10 +221,10 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
             Cancel
           </button>
           <button
-            disabled={!repoUrl.trim()}
+            disabled={activeTab === "Upload ZIP" ? !selectedFile : !repoUrl.trim()}
             onClick={handleAnalyze}
             className={`flex items-center gap-2 text-white py-3 px-8 rounded-2xl font-bold
-    ${repoUrl.trim()
+    ${(activeTab === "Upload ZIP" ? selectedFile : repoUrl.trim())
                 ? "bg-blue-secondary hover:bg-blue-primary shadow-xl shadow-blue-600/20 transition-all cursor-pointer group"
                 : "bg-blue-secondary opacity-50 cursor-not-allowed"
               }`}
@@ -206,7 +232,7 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
             Analyze repository
             <span
               className={`material-symbols-outlined text-lg 
-                ${repoUrl.trim()
+                ${(activeTab === "Upload ZIP" ? selectedFile : repoUrl.trim())
                   ? "group-hover:translate-x-1 transition-transform"
                   : ""
                 }`}
