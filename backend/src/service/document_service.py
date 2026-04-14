@@ -53,7 +53,6 @@ class DocumentService:
     def get_documents(user_id: str) -> List[dict]:
         query = {}
         
-        oid = ObjectId(user_id)
         query["$or"] = [
             {"user_id": user_id},
         ]
@@ -63,6 +62,22 @@ class DocumentService:
             doc["user_id"] = str(doc["user_id"])
             DocumentService._add_ui_fields(doc)
         return docs
+
+    @staticmethod
+    def get_latest_document(user_id: str) -> Optional[dict]:
+        query = {"user_id": user_id}
+        doc = document_collection.find_one(
+            query, 
+            sort=[("updatedAt", -1)]
+        )
+        if doc:
+            doc["_id"] = str(doc["_id"])
+            if "repository_id" in doc:
+                doc["repository_id"] = str(doc["repository_id"])
+            if "user_id" in doc:
+                doc["user_id"] = str(doc["user_id"])
+            DocumentService._add_ui_fields(doc)
+        return doc
 
     @staticmethod
     def get_document_by_id(doc_id: str) -> Optional[dict]:

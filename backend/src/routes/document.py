@@ -13,6 +13,10 @@ async def create_document(doc_data: DocumentCreate):
 async def get_documents(user_id: str = None):
     return DocumentService.get_documents(user_id)
 
+@router.get("/latest/{user_id}", response_model=Optional[DocumentResponse])
+async def get_latest_document(user_id: str):
+    return DocumentService.get_latest_document(user_id)
+
 @router.get("/{doc_id}", response_model=DocumentResponse)
 async def get_document_by_id(doc_id: str):
     doc = DocumentService.get_document_by_id(doc_id)
