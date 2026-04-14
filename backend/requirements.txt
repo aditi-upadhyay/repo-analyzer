@@ -9,6 +9,7 @@ cryptography==46.0.5
 distro==1.9.0
 dnspython==2.8.0
 fastapi==0.135.1
+python-multipart==0.0.26
 gitdb==4.0.12
 GitPython==3.1.46
 google-ai-generativelanguage==0.6.15
@@ -35,7 +36,6 @@ pydantic_core==2.41.5
 pymongo==4.16.0
 pyparsing==3.3.2
 python-dotenv==1.2.2
-python-multipart==0.0.26
 requests==2.32.5
 rsa==4.9.1
 smmap==5.0.3
