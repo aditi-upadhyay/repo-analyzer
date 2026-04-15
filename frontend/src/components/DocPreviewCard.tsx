@@ -1,6 +1,22 @@
 import React from 'react';
 
-const DocPreviewCard: React.FC = () => {
+interface DocPreviewCardProps {
+    repositoryName?: string;
+    onViewClick?: () => void;
+    isLoading?: boolean;
+}
+
+const DocPreviewCard: React.FC<DocPreviewCardProps> = ({ repositoryName, onViewClick, isLoading }) => {
+    if (isLoading) {
+        return (
+            <div className="group relative overflow-hidden rounded-2xl bg-blue-secondary/80 p-6 animate-pulse">
+                <div className="h-14 w-full bg-white/10 rounded-xl"></div>
+            </div>
+        );
+    }
+
+    if (!repositoryName) return null;
+
     return (
         <div className="group relative overflow-hidden rounded-2xl bg-blue-secondary p-6 transition-all duration-300 hover:-translate-y-0.5">
             <div className="absolute right-0 top-0 -translate-y-12 translate-x-12 opacity-10 transition-transform duration-500 group-hover:scale-110">
@@ -17,11 +33,14 @@ const DocPreviewCard: React.FC = () => {
                             <span className="size-2 rounded-full bg-green-400 animate-pulse"></span>
                             <span className="text-xs font-bold uppercase tracking-widest text-white/70">Recently generated</span>
                         </div>
-                        <h3 className="text-2xl font-bold text-white tracking-tight">Documentation: auth-gateway-api</h3>
+                        <h3 className="text-2xl font-bold text-white tracking-tight">Documentation: {repositoryName}</h3>
                     </div>
                 </div>
 
-                <button className="group/btn flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-blue-secondary shadow-md transition-all hover:bg-slate-50 hover:shadow-lg active:scale-95">
+                <button
+                    onClick={onViewClick}
+                    className="group/btn flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-blue-secondary shadow-md transition-all hover:bg-slate-50 hover:shadow-lg active:scale-95"
+                >
                     View Latest Docs
                     <span className="material-symbols-outlined text-lg transition-transform group-hover/btn:translate-x-1">arrow_forward</span>
                 </button>
