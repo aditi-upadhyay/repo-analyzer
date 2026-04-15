@@ -10,9 +10,13 @@ import { useNavigate } from "react-router-dom";
 
 function ActivityState({ data = [] }: { data?: any[] }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { documents } = useAuth();
-  const { setView, setSelectedRepo } = useDocumentation();
+  const { documents, latestDocument, loading } = useAuth();
+  const { setView, setSelectedRepo, repositories } = useDocumentation();
   const navigate = useNavigate();
+
+  const latestRepo = latestDocument
+    ? repositories.find(r => r._id === latestDocument.repository_id)
+    : null;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -47,7 +51,11 @@ function ActivityState({ data = [] }: { data?: any[] }) {
 
   return (
     <div className="flex flex-col p-4 gap-4 max-w-7xl mx-auto w-full">
-      <DocPreviewCard />
+      <DocPreviewCard
+        repositoryName={latestRepo?.name}
+        onViewClick={() => latestRepo && handleViewDocumentation(latestRepo)}
+        isLoading={loading}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <OverviewCard
