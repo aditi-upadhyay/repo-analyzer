@@ -30,7 +30,9 @@ interface AuthContextType {
     login: (userData: User) => void;
     logout: () => void;
     loading: boolean;
-    documents: Document[] | []
+    documents: Document[] | [];
+    latestDocument: Document | null;
+    fetchLatestDocument: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,6 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [documents, setDocuments] = useState<any[]>([]);
+    const [latestDocument, setLatestDocument] = useState<any>(null);
 
     useEffect(() => {
         const savedUser = localStorage.getItem('user');
@@ -51,9 +54,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         if (user?._id) {
             fetchDocuments();
+            fetchLatestDocument();
         }
     }, [user]);
-    
+
     const login = (userData: User) => {
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
@@ -66,17 +70,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const fetchDocuments = async () => {
         if (!user?._id) return;
-      
+
         try {
-          const response = await axios.get(`${API_BASE_URL}/api/documents/${user._id}`);
-          const doc = response?.data || [];
-          setDocuments(doc);
+            const response = await axios.get(`${API_BASE_URL}/api/documents/${user._id}`);
+            const doc = response?.data || [];
+            setDocuments(doc);
         } catch (error) {
-          console.error(error);
+            console.error(error);
         }
-      };
+    };
+
+    const fetchLatestDocument = async () => {
+        if (!user?._id) return;
+        try {
+            const response = await axios.get(`${API_BASE_URL}/api/documents/latest/${user._id}`);
+            setLatestDocument(response.data);
+        } catch (error) {
+            console.error("Error fetching latest document:", error);
+        }
+    };
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading, documents }}>
+        <AuthContext.Provider value={{ user, login, logout, loading, documents, latestDocument, fetchLatestDocument }}>
             {children}
         </AuthContext.Provider>
     );
