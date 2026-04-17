@@ -3,6 +3,9 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import axios from "axios";
 import { useDocumentation } from "../../context/DocumentationContext";
+import { useAuth } from "../../context/AuthContext";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
 
 interface NavItemProps {
     label: string;
@@ -24,16 +27,27 @@ const NavItem = ({ label, active, onClick }: NavItemProps) => (
 
 const DocumentationView: React.FC = () => {
     const { selectedRepo } = useDocumentation();
+    const { latestDocument } = useAuth();
     const [markdown, setMarkdown] = useState<string>("");
     const [sections, setSections] = useState<{ id: string; label: string }[]>([]);
     const [activeSection, setActiveSection] = useState<string>("");
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const containerRef = React.useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const fetchDoc = async () => {
+            // Determine which repo/doc to fetch
+            const repoToFetch = selectedRepo || (latestDocument ? { _id: latestDocument.repository_id, name: "Latest Analysis" } : null);
+
+            if (!repoToFetch?._id) {
+                console.log("No repository selected and no latest document available");
+                return;
+            }
+
+            setIsLoading(true);
             try {
-                const response = await axios.get("http://127.0.0.1:8000/documentation");
-                if (response.data.content) {
+                const response = await axios.get(`${API_BASE_URL}/api/documents/repository/${repoToFetch._id}`);
+                if (response.data && response.data.content) {
                     const content = response.data.content;
                     setMarkdown(content);
 
@@ -48,13 +62,20 @@ const DocumentationView: React.FC = () => {
                         });
                     setSections(headers);
                     if (headers.length > 0) setActiveSection(headers[0].id);
+                } else if (response.data && response.data.error) {
+                    console.error("Backend returned error:", response.data.error);
+                    setMarkdown(`# Error\n\n${response.data.error}`);
                 }
-            } catch (error) {
+            } catch (error: any) {
                 console.error("Failed to fetch documentation:", error);
+                const errorMsg = error.response?.data?.detail || "Failed to fetch documentation from the database.";
+                setMarkdown(`# Documentation Not Found\n\n${errorMsg}\n\nIt seems the documentation for this repository is not available in the database.`);
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchDoc();
-    }, []);
+    }, [selectedRepo, latestDocument]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -140,116 +161,123 @@ const DocumentationView: React.FC = () => {
             {/* Right Content - Scrollable */}
             <div ref={containerRef} className="flex-1 overflow-y-auto p-12 scroll-smooth">
                 <div className="max-w-4xl mx-auto flex flex-col gap-6 ">
-                    <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                            h1: ({ children }) => (
-                                <h1 className="text-4xl font-black text-slate-900 tracking-tight border-b border-slate-100">
-                                    {children}
-                                </h1>
-                            ),
-                            h2: ({ children }) => {
-                                const id = String(children).toLowerCase().replace(/[^a-z0-9]+/g, '-');
-                                return (
-                                    <section id={id} className=" first:pt-0 flex flex-col gap-6 scroll-mt-12">
-                                        <div className="flex items-center gap-4">
-                                            <div className="size-10 rounded-xl bg-blue-light text-blue-secondary flex items-center justify-center">
-                                                <span className="material-symbols-outlined text-2xl font-bold">
-                                                    {id.includes('overview') ? 'info' :
-                                                        id.includes('feature') ? 'star' :
-                                                            id.includes('tech') ? 'api' :
-                                                                id.includes('structure') ? 'account_tree' :
-                                                                    id.includes('component') ? 'extension' :
-                                                                        id.includes('install') ? 'download' :
-                                                                            id.includes('usage') ? 'settings_suggest' :
-                                                                                id.includes('workflow') ? 'alt_route' :
-                                                                                    'description'}
+                    {isLoading ? (
+                        <div className="flex flex-col items-center justify-center h-64 text-slate-400 gap-4">
+                            <div className="size-12 border-4 border-blue-secondary border-t-transparent rounded-full animate-spin"></div>
+                            <span className="text-sm font-semibold">Loading documentation from database...</span>
+                        </div>
+                    ) : (
+                        <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                                h1: ({ children }) => (
+                                    <h1 className="text-4xl font-black text-slate-900 tracking-tight border-b border-slate-100">
+                                        {children}
+                                    </h1>
+                                ),
+                                h2: ({ children }) => {
+                                    const id = String(children).toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                                    return (
+                                        <section id={id} className=" first:pt-0 flex flex-col gap-6 scroll-mt-12">
+                                            <div className="flex items-center gap-4">
+                                                <div className="size-10 rounded-xl bg-blue-light text-blue-secondary flex items-center justify-center">
+                                                    <span className="material-symbols-outlined text-2xl font-bold">
+                                                        {id.includes('overview') ? 'info' :
+                                                            id.includes('feature') ? 'star' :
+                                                                id.includes('tech') ? 'api' :
+                                                                    id.includes('structure') ? 'account_tree' :
+                                                                        id.includes('component') ? 'extension' :
+                                                                            id.includes('install') ? 'download' :
+                                                                                id.includes('usage') ? 'settings_suggest' :
+                                                                                    id.includes('workflow') ? 'alt_route' :
+                                                                                        'description'}
+                                                    </span>
+                                                </div>
+                                                <h2 className="text-3xl font-bold text-slate-900 tracking-tight">{children}</h2>
+                                            </div>
+                                        </section>
+                                    );
+                                },
+                                h3: ({ children }) => (
+                                    <h3 className="text-xl font-bold text-slate-800 mt-8 mb-4">{children}</h3>
+                                ),
+                                p: ({ children }) => (
+                                    <div className="text-slate-600 leading-relaxed text-lg ">
+                                        {children}
+                                    </div>
+                                ),
+                                ul: ({ children }) => (
+                                    <ul className="flex flex-col gap-3 list-none mb-6">
+                                        {children}
+                                    </ul>
+                                ),
+                                li: ({ children }) => (
+                                    <li className="flex items-start gap-3 text-slate-600 text-lg">
+                                        <span className="size-2 rounded-full bg-blue-secondary/30 mt-3 flex-shrink-0" />
+                                        <span>{children}</span>
+                                    </li>
+                                ),
+                                code: ({ node, inline, className, children, ...props }: any) => {
+                                    const match = /language-(\w+)/.exec(className || '');
+                                    return !inline ? (
+                                        <div className="my-6 rounded-2xl bg-slate-50 border border-slate-200 overflow-hidden relative group">
+                                            <div className="absolute right-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button className="p-2 rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-blue-secondary hover:border-blue-200 transition-all shadow-sm cursor-pointer">
+                                                    <span className="material-symbols-outlined text-lg">content_copy</span>
+                                                </button>
+                                            </div>
+                                            <div className="px-4 py-2 bg-slate-100/50 border-b border-slate-200 flex justify-between items-center">
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                                    {match ? match[1] : 'code'}
                                                 </span>
                                             </div>
-                                            <h2 className="text-3xl font-bold text-slate-900 tracking-tight">{children}</h2>
+                                            <pre className="p-8 text-sm font-mono leading-7 overflow-x-auto selection:bg-blue-100">
+                                                <code className="text-slate-700 block whitespace-pre" {...props}>
+                                                    {String(children).replace(/\n$/, '')}
+                                                </code>
+                                            </pre>
                                         </div>
-                                    </section>
-                                );
-                            },
-                            h3: ({ children }) => (
-                                <h3 className="text-xl font-bold text-slate-800 mt-8 mb-4">{children}</h3>
-                            ),
-                            p: ({ children }) => (
-                                <div className="text-slate-600 leading-relaxed text-lg ">
-                                    {children}
-                                </div>
-                            ),
-                            ul: ({ children }) => (
-                                <ul className="flex flex-col gap-3 list-none mb-6">
-                                    {children}
-                                </ul>
-                            ),
-                            li: ({ children }) => (
-                                <li className="flex items-start gap-3 text-slate-600 text-lg">
-                                    <span className="size-2 rounded-full bg-blue-secondary/30 mt-3 flex-shrink-0" />
-                                    <span>{children}</span>
-                                </li>
-                            ),
-                            code: ({ node, inline, className, children, ...props }: any) => {
-                                const match = /language-(\w+)/.exec(className || '');
-                                return !inline ? (
-                                    <div className="my-6 rounded-2xl bg-slate-50 border border-slate-200 overflow-hidden relative group">
-                                        <div className="absolute right-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button className="p-2 rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-blue-secondary hover:border-blue-200 transition-all shadow-sm cursor-pointer">
-                                                <span className="material-symbols-outlined text-lg">content_copy</span>
-                                            </button>
+                                    ) : (
+                                        <code className="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-800 font-mono text-sm font-bold" {...props}>
+                                            {children}
+                                        </code>
+                                    );
+                                },
+                                blockquote: ({ children }) => (
+                                    <div className="p-6 rounded-2xl bg-blue-50/30 border-l-4 border-blue-500 flex items-start gap-4 my-8">
+                                        <span className="material-symbols-outlined text-blue-500 font-bold">info</span>
+                                        <div className="text-blue-900 italic font-medium">
+                                            {children}
                                         </div>
-                                        <div className="px-4 py-2 bg-slate-100/50 border-b border-slate-200 flex justify-between items-center">
-                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                                                {match ? match[1] : 'code'}
-                                            </span>
-                                        </div>
-                                        <pre className="p-8 text-sm font-mono leading-7 overflow-x-auto selection:bg-blue-100">
-                                            <code className="text-slate-700 block whitespace-pre" {...props}>
-                                                {String(children).replace(/\n$/, '')}
-                                            </code>
-                                        </pre>
                                     </div>
-                                ) : (
-                                    <code className="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-800 font-mono text-sm font-bold" {...props}>
-                                        {children}
-                                    </code>
-                                );
-                            },
-                            blockquote: ({ children }) => (
-                                <div className="p-6 rounded-2xl bg-blue-50/30 border-l-4 border-blue-500 flex items-start gap-4 my-8">
-                                    <span className="material-symbols-outlined text-blue-500 font-bold">info</span>
-                                    <div className="text-blue-900 italic font-medium">
-                                        {children}
+                                ),
+                                table: ({ children }) => (
+                                    <div className="my-8 overflow-hidden rounded-2xl border border-slate-100 shadow-sm">
+                                        <table className="w-full border-collapse bg-white text-left text-sm text-slate-500">
+                                            {children}
+                                        </table>
                                     </div>
-                                </div>
-                            ),
-                            table: ({ children }) => (
-                                <div className="my-8 overflow-hidden rounded-2xl border border-slate-100 shadow-sm">
-                                    <table className="w-full border-collapse bg-white text-left text-sm text-slate-500">
+                                ),
+                                thead: ({ children }) => (
+                                    <thead className="bg-slate-50">
                                         {children}
-                                    </table>
-                                </div>
-                            ),
-                            thead: ({ children }) => (
-                                <thead className="bg-slate-50">
-                                    {children}
-                                </thead>
-                            ),
-                            th: ({ children }) => (
-                                <th className="px-6 py-4 font-bold text-slate-900">
-                                    {children}
-                                </th>
-                            ),
-                            td: ({ children }) => (
-                                <td className="border-t border-slate-100 px-6 py-4">
-                                    {children}
-                                </td>
-                            ),
-                        }}
-                    >
-                        {markdown}
-                    </ReactMarkdown>
+                                    </thead>
+                                ),
+                                th: ({ children }) => (
+                                    <th className="px-6 py-4 font-bold text-slate-900">
+                                        {children}
+                                    </th>
+                                ),
+                                td: ({ children }) => (
+                                    <td className="border-t border-slate-100 px-6 py-4">
+                                        {children}
+                                    </td>
+                                ),
+                            }}
+                        >
+                            {markdown}
+                        </ReactMarkdown>
+                    )}
                 </div>
             </div>
         </div>
