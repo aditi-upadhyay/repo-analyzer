@@ -17,6 +17,13 @@ async def get_documents(user_id: str = None):
 async def get_latest_document(user_id: str):
     return DocumentService.get_latest_document(user_id)
 
+@router.get("/repository/{repo_id}", response_model=Optional[DocumentResponse])
+async def get_document_by_repo_id(repo_id: str):
+    doc = DocumentService.get_document_by_repo_id(repo_id)
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found for this repository")
+    return doc
+
 @router.get("/{doc_id}", response_model=DocumentResponse)
 async def get_document_by_id(doc_id: str):
     doc = DocumentService.get_document_by_id(doc_id)

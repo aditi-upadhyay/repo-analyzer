@@ -80,6 +80,25 @@ class DocumentService:
         return doc
 
     @staticmethod
+    def get_document_by_repo_id(repo_id: str) -> Optional[dict]:
+        doc = document_collection.find_one({"repository_id": str(repo_id)})
+        if not doc:
+            # Try with ObjectId just in case it was stored as one
+            try:
+                doc = document_collection.find_one({"repository_id": ObjectId(repo_id)})
+            except:
+                pass
+        
+        if doc:
+            doc["_id"] = str(doc["_id"])
+            if "repository_id" in doc:
+                doc["repository_id"] = str(doc["repository_id"])
+            if "user_id" in doc:
+                doc["user_id"] = str(doc["user_id"])
+            DocumentService._add_ui_fields(doc)
+        return doc
+
+    @staticmethod
     def get_document_by_id(doc_id: str) -> Optional[dict]:
         doc = document_collection.find_one({"_id": ObjectId(doc_id)})
         if doc:
