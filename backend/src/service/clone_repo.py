@@ -2,10 +2,13 @@ import os
 import asyncio
 import shutil
 import zipfile
+from datetime import datetime
+from git import Repo
 
 from .extract_functions import scan_repository
 from .ai_doc_generator import generate_documentation
 from .document_service import DocumentService
+from .repository_service import RepositoryService
 from ..core.connection_shared import manager
 # REPO_URL = "https://github.com/aditi-upadhyay/fenrir-security-assessment.git"
 REPO_URL = "https://gitlab.com/FlairLabs/Clients/bv/augmented-surveyor.git"
@@ -57,8 +60,6 @@ def main():
 async def _run_analysis_pipeline(clone_dir: str, session_id: str, repo_id: str = None, user_id: str = None, documentation: str = None):
     try:
         if repo_id:
-            from .repository_service import RepositoryService
-            from datetime import datetime
             RepositoryService.update_repository(repo_id, {
                 "status": "processing",
                 "updatedAt": datetime.utcnow()
@@ -80,8 +81,6 @@ async def _run_analysis_pipeline(clone_dir: str, session_id: str, repo_id: str =
         await manager.send_message(session_id, "GENERATED: Process complete")
 
         if repo_id:
-            from .repository_service import RepositoryService
-            from datetime import datetime
             RepositoryService.update_repository(repo_id, {
                 "status": "completed",
                 "updatedAt": datetime.utcnow()
@@ -104,8 +103,6 @@ async def _run_analysis_pipeline(clone_dir: str, session_id: str, repo_id: str =
         print(f"Error during analysis: {e}")
         if repo_id:
             try:
-                from .repository_service import RepositoryService
-                from datetime import datetime
                 RepositoryService.update_repository(repo_id, {
                     "status": "failed",
                     "updatedAt": datetime.utcnow()
@@ -116,7 +113,6 @@ async def _run_analysis_pipeline(clone_dir: str, session_id: str, repo_id: str =
         await manager.send_message(session_id, f"ERROR: {str(e)}")
 
 async def startAnalyzing(url: str, session_id: str, access_token: str = None, repo_id: str = None, user_id: str = None):
-    from git import Repo
     clone_dir = f"./repo_{session_id}"
     
     # Wait for websocket to connect (up to 5 seconds)
