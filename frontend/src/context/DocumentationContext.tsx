@@ -17,8 +17,10 @@ interface DocumentationContextType {
     setSelectedRepo: (repo: any | null) => void;
     repositories: any[];
     setRepositories: (repos: any[]) => void;
+    documents: any[];
+    setDocuments: (docs: any[]) => void;
     isLoading: boolean;
-    fetchRepositories: () => Promise<void>;
+    fetchData: () => Promise<void>;
 }
 
 const DocumentationContext = createContext<DocumentationContextType | undefined>(undefined);
@@ -30,25 +32,30 @@ export const DocumentationProvider: React.FC<{ children: React.ReactNode }> = ({
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedRepo, setSelectedRepo] = useState<any | null>(null);
     const [repositories, setRepositories] = useState<any[]>([]);
+    const [documents, setDocuments] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    const fetchRepositories = useCallback(async () => {
+    const fetchData = useCallback(async () => {
         if (!user?._id) return;
         setIsLoading(true);
         try {
-            const response = await axios.get(`${API_BASE_URL}/api/repositories/${user._id}`);
-            const repos = response?.data?.data || [];
-            setRepositories(repos);
+            const [reposRes, docsRes] = await Promise.all([
+                axios.get(`${API_BASE_URL}/api/repositories/${user._id}`),
+                axios.get(`${API_BASE_URL}/api/documents/${user._id}`)
+            ]);
+
+            setRepositories(reposRes?.data?.data || []);
+            setDocuments(docsRes?.data || []);
         } catch (error) {
-            console.error("Error fetching repositories:", error);
+            console.error("Error fetching data:", error);
         } finally {
             setIsLoading(false);
         }
     }, [user?._id]);
 
     useEffect(() => {
-        fetchRepositories();
-    }, [fetchRepositories]);
+        fetchData();
+    }, [fetchData]);
 
     return (
         <DocumentationContext.Provider value={{
@@ -62,8 +69,10 @@ export const DocumentationProvider: React.FC<{ children: React.ReactNode }> = ({
             setSelectedRepo,
             repositories,
             setRepositories,
+            documents,
+            setDocuments,
             isLoading,
-            fetchRepositories
+            fetchData
         }}>
             {children}
         </DocumentationContext.Provider>
