@@ -53,19 +53,51 @@ class DocumentService:
     def get_documents(user_id: str) -> List[dict]:
         query = {}
         
+        # Query by both string and ObjectId
         query["$or"] = [
             {"user_id": user_id},
         ]
+        try:
+            query["$or"].append({"user_id": ObjectId(user_id)})
+        except:
+            pass
+            
         docs = list(document_collection.find(query))
+        
+        # Pre-fetch repository names for efficiency
+        from ..config.db import repository_collection
+        
         for doc in docs:
             doc["_id"] = str(doc["_id"])
-            doc["user_id"] = str(doc["user_id"])
+            doc["user_id"] = str(doc.get("user_id", ""))
+            
+            repo_id = doc.get("repository_id")
+            if repo_id:
+                doc["repository_id"] = str(repo_id)
+                # Fetch repository name
+                repo = repository_collection.find_one({"_id": ObjectId(repo_id)})
+                if repo:
+                    doc["repository_name"] = repo.get("name", "Unknown Repository")
+                else:
+                    doc["repository_name"] = "Unknown Repository"
+            else:
+                doc["repository_name"] = "N/A"
+                
             DocumentService._add_ui_fields(doc)
         return docs
 
     @staticmethod
     def get_latest_document(user_id: str) -> Optional[dict]:
-        query = {"user_id": user_id}
+        query = {
+            "$or": [
+                {"user_id": user_id},
+            ]
+        }
+        try:
+            query["$or"].append({"user_id": ObjectId(user_id)})
+        except:
+            pass
+            
         doc = document_collection.find_one(
             query, 
             sort=[("updatedAt", -1)]
