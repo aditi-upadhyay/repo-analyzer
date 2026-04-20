@@ -18,6 +18,7 @@ class DocumentUpdate(BaseModel):
 
 class DocumentResponse(DocumentBase):
     id: str = Field(alias="_id")
+    repository_name: Optional[str] = "N/A"
     createdAt: datetime
     updatedAt: Optional[datetime] = None
     
