@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 function ActivityState({ data = [] }: { data?: any[] }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [initialTab, setInitialTab] = useState("GitHub URL");
   const { documents, latestDocument, loading } = useAuth();
   const { setView, setSelectedRepo, repositories } = useDocumentation();
   const navigate = useNavigate();
@@ -82,7 +83,10 @@ function ActivityState({ data = [] }: { data?: any[] }) {
           <div className="grid grid-cols-2 gap-3 relative z-10">
             <button
               className="flex flex-col items-center justify-center gap-2 cursor-pointer bg-slate-50 hover:bg-blue-secondary hover:text-white p-4 rounded-xl transition-all duration-300 group/btn border border-slate-100 hover:border-blue-secondary hover:shadow-md"
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => {
+                setInitialTab("GitHub URL");
+                setIsModalOpen(true);
+              }}
             >
               <span className="material-symbols-outlined text-2xl text-slate-400 group-hover/btn:text-white">
                 add_circle
@@ -91,7 +95,13 @@ function ActivityState({ data = [] }: { data?: any[] }) {
                 Analyze New
               </span>
             </button>
-            <button className="flex flex-col items-center justify-center gap-2 cursor-pointer bg-slate-50 hover:bg-blue-secondary hover:text-white p-4 rounded-xl transition-all duration-300 group/btn border border-slate-100 hover:border-blue-secondary hover:shadow-md">
+            <button
+              className="flex flex-col items-center justify-center gap-2 cursor-pointer bg-slate-50 hover:bg-blue-secondary hover:text-white p-4 rounded-xl transition-all duration-300 group/btn border border-slate-100 hover:border-blue-secondary hover:shadow-md"
+              onClick={() => {
+                setInitialTab("Upload ZIP");
+                setIsModalOpen(true);
+              }}
+            >
               <span className="material-symbols-outlined text-2xl text-slate-400 group-hover/btn:text-white">
                 cloud_upload
               </span>
@@ -158,6 +168,7 @@ function ActivityState({ data = [] }: { data?: any[] }) {
       <NewAnalysisModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        initialTab={initialTab}
       />
     </div>
   );
