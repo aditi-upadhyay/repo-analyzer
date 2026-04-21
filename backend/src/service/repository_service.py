@@ -53,16 +53,14 @@ class RepositoryService:
     def get_repositories(user_id: Optional[str] = None) -> List[dict]:
         query = {}
         if user_id:
+            # Try to find by ObjectId OR String
+            query["$or"] = [
+                 {"user_id": user_id},
+            ]
             try:
-                # Try to find by ObjectId OR String, across all possible field names
-                query["$or"] = [
-                     {"user_id": user_id},
-                ]
+                query["$or"].append({"user_id": ObjectId(user_id)})
             except Exception:
-                # If invalid ObjectId format, just check as string
-                query["$or"] = [
-                    {"user_id": user_id},
-                ]
+                pass
         
         repos = list(repository_collection.find(query))
         for repo in repos:
