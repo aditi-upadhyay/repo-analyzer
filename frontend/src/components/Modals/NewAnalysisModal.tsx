@@ -1,16 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 interface NewAnalysisModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialTab?: string;
 }
 
-function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
+function NewAnalysisModal({ isOpen, onClose, initialTab }: NewAnalysisModalProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState("GitHub URL");
+  const [activeTab, setActiveTab] = useState(initialTab || "GitHub URL");
   const [repoUrl, setRepoUrl] = useState("");
   const [accessToken, setAccessToken] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -19,6 +20,15 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
     { name: "Upload ZIP", icon: "upload_file" },
     { name: "Local path", icon: "folder" },
   ];
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab(initialTab || "GitHub URL");
+      setRepoUrl("");
+      setAccessToken("");
+      setSelectedFile(null);
+    }
+  }, [isOpen, initialTab]);
 
   if (!isOpen) return null;
 
@@ -33,11 +43,7 @@ function NewAnalysisModal({ isOpen, onClose }: NewAnalysisModalProps) {
         formData.append("session_id", sessionId);
         if (user?._id) formData.append("user_id", user._id);
 
-        await axios.post("http://127.0.0.1:8000/analyze-zip", formData, {
-          headers: {
-            "Content-Type": "multipart-form-data",
-          },
-        });
+        await axios.post("http://127.0.0.1:8000/analyze-zip", formData);
         repoName = selectedFile.name.split(".")[0];
       } else {
         await axios.post("http://127.0.0.1:8000/analyze", {
