@@ -3,6 +3,13 @@ import NewAnalysisModal from "../Modals/NewAnalysisModal";
 
 function EmptyRepository() {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [initialTab, setInitialTab] = useState("GitHub URL");
+
+    const openModal = (tab: string) => {
+        setInitialTab(tab);
+        setIsModalOpen(true);
+    };
+
     return (
         <div className="flex flex-col items-center justify-center h-full w-full bg-slate-50/50 p-8 relative overflow-hidden">
             <div className="absolute top-1/4 left-1/4 size-64 bg-blue-light/50 rounded-full blur-3xl -z-10 animate-pulse" />
@@ -35,14 +42,24 @@ function EmptyRepository() {
                 </p>
             </div>
 
-            <button
-                onClick={() => setIsModalOpen(true)}
-                className="flex items-center gap-3 bg-blue-secondary text-white p-5 px-8 rounded-2xl font-bold shadow-xl shadow-blue-600/30 transition-all duration-300 group relative overflow-hidden cursor-pointer"
-            >
-                <div className="absolute inset-0 bg-white/20 translate-x-full skew-x-12" />
-                <span className="material-symbols-outlined text-2xl relative z-10">add_circle</span>
-                <span className="text-lg relative z-10">Analyze New Repository</span>
-            </button>
+            <div className="flex gap-4">
+                <button
+                    onClick={() => openModal("GitHub URL")}
+                    className="flex items-center gap-3 bg-blue-secondary text-white p-5 px-8 rounded-2xl font-bold shadow-xl shadow-blue-600/30 transition-all duration-300 group relative overflow-hidden cursor-pointer"
+                >
+                    <div className="absolute inset-0 bg-white/20 translate-x-full skew-x-12" />
+                    <span className="material-symbols-outlined text-2xl relative z-10">add_circle</span>
+                    <span className="text-lg relative z-10">Analyze New Repository</span>
+                </button>
+
+                <button
+                    onClick={() => openModal("Upload ZIP")}
+                    className="flex items-center gap-3 bg-white text-slate-600 border border-slate-200 p-5 px-8 rounded-2xl font-bold hover:bg-slate-50 transition-all duration-300 group cursor-pointer"
+                >
+                    <span className="material-symbols-outlined text-2xl text-slate-400 group-hover:text-blue-secondary transition-colors">cloud_upload</span>
+                    <span className="text-lg">Upload ZIP</span>
+                </button>
+            </div>
 
             <div className="mt-20 flex flex-wrap justify-center gap-10 opacity-70 transition-opacity hover:opacity-100 duration-500">
                 <FeatureItem label="Full code coverage" />
@@ -50,7 +67,11 @@ function EmptyRepository() {
                 <FeatureItem label="Instant PR reviews" />
             </div>
 
-            <NewAnalysisModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+            <NewAnalysisModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                initialTab={initialTab}
+            />
         </div>
     );
 }
