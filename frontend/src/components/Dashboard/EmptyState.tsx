@@ -1,6 +1,11 @@
+import { useState } from "react";
 import Card from "../Card";
+import NewAnalysisModal from "../Modals/NewAnalysisModal";
 
 const EmptyState = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [initialTab, setInitialTab] = useState("GitHub URL");
+
     const cards = [
         {
             icon: "rocket_launch",
@@ -18,6 +23,11 @@ const EmptyState = () => {
             description: "Your generated docs will appear here once ready."
         }
     ]
+
+    const openModal = (tab: string) => {
+        setInitialTab(tab);
+        setIsModalOpen(true);
+    };
 
     return (
         <div className="flex h-full flex-col p-4 gap-4 ">
@@ -44,7 +54,7 @@ const EmptyState = () => {
                         </span>
                     </div>
                     <div className="flex gap-6 w-3/4 cursor-pointer">
-                        <div className="bg-white p-6 rounded-xl border border-slate-200 flex gap-4 flex-col">
+                        <div className="bg-white p-6 rounded-xl border border-slate-200 flex gap-4 flex-col flex-1">
                             <div className="size-10 rounded-full bg-blue-light text-blue-primary flex items-center justify-center shrink-0">
                                 <span className="material-symbols-outlined">
                                     terminal
@@ -55,13 +65,16 @@ const EmptyState = () => {
                                 </span>
                                 <span className="text-sm text-slate-500">Connect your GitHub account to import and analyze repositories.</span>
                                 <div className="flex items-center gap-2 text-blue-primary">
-                                    <button className="text-sm">Connect GitHub</button>
+                                    <button
+                                        onClick={() => openModal("GitHub URL")}
+                                        className="text-sm cursor-pointer"
+                                    >Connect GitHub</button>
                                     <span className="material-symbols-outlined !text-xs group-hover:translate-x-1 transition-transform">arrow_forward</span>
                                 </div>
 
                             </div>
                         </div>
-                        <div className="bg-white p-6 rounded-xl border border-slate-200 flex gap-4 flex-col">
+                        <div className="bg-white p-6 rounded-xl border border-slate-200 flex gap-4 flex-col flex-1">
                             <div className="size-10 rounded-full bg-blue-light text-blue-primary flex items-center justify-center shrink-0">
                                 <span className="material-symbols-outlined">
                                     upload_file
@@ -72,7 +85,10 @@ const EmptyState = () => {
                                 </span>
                                 <span className="text-sm text-slate-500">Upload a compressed archieve of your local code for immediate analysis </span>
                                 <div className="flex items-center gap-2 text-blue-primary">
-                                    <button className="text-sm">Choose File</button>
+                                    <button
+                                        onClick={() => openModal("Upload ZIP")}
+                                        className="text-sm cursor-pointer"
+                                    >Choose File</button>
                                     <span className="material-symbols-outlined !text-xs group-hover:translate-x-1 transition-transform">arrow_forward</span>
                                 </div>
                             </div>
@@ -80,8 +96,13 @@ const EmptyState = () => {
                     </div>
                 </div>
             </div>
+            <NewAnalysisModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                initialTab={initialTab}
+            />
         </div>
     )
 }
 
-export default EmptyState
+export default EmptyState;
