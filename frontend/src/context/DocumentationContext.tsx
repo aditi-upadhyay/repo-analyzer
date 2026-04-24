@@ -21,6 +21,8 @@ interface DocumentationContextType {
     setDocuments: (docs: any[]) => void;
     isLoading: boolean;
     fetchData: () => Promise<void>;
+    searchQuery: string;
+    setSearchQuery: (query: string) => void;
 }
 
 const DocumentationContext = createContext<DocumentationContextType | undefined>(undefined);
@@ -34,6 +36,7 @@ export const DocumentationProvider: React.FC<{ children: React.ReactNode }> = ({
     const [repositories, setRepositories] = useState<any[]>([]);
     const [documents, setDocuments] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
 
     const fetchData = useCallback(async () => {
         if (!user?._id) return;
@@ -72,7 +75,9 @@ export const DocumentationProvider: React.FC<{ children: React.ReactNode }> = ({
             documents,
             setDocuments,
             isLoading,
-            fetchData
+            fetchData,
+            searchQuery,
+            setSearchQuery
         }}>
             {children}
         </DocumentationContext.Provider>
