@@ -14,10 +14,15 @@ function DocumentationState() {
         setView,
         setSelectedRepo,
         documents,
-        isLoading
+        isLoading,
+        searchQuery
     } = useDocumentation();
 
     const tabs = ["All Repositories", "Github", "Zip"];
+
+    const filteredDocuments = documents.filter((doc: any) =>
+        (doc.repository_name || "").toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -93,47 +98,59 @@ function DocumentationState() {
                     <span className="text-sm font-semibold text-white">Add repository</span>
                 </div>
             </div>
-            <Table
-                data={documents}
-                header="Documentation Records"
-                columnHeaders={["Document", "Status", "Generated On", "Actions"]}
-                totalEntries={documents.length}
-                columnEntries={6}
-                renderRow={(doc, i) => (
-                    <tr key={doc._id || i} className="hover:bg-slate-50/50 transition-colors group cursor-pointer">
-                        <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
-                                <div className="size-8 rounded-lg bg-blue-light flex items-center justify-center text-blue-primary group-hover:bg-blue-secondary group-hover:text-white transition-colors">
-                                    <span className="material-symbols-outlined text-lg">description</span>
+            {filteredDocuments.length > 0 ? (
+                <Table
+                    data={filteredDocuments}
+                    header={searchQuery ? `Search Results for "${searchQuery}"` : "Documentation Records"}
+                    columnHeaders={["Document", "Status", "Generated On", "Actions"]}
+                    totalEntries={filteredDocuments.length}
+                    columnEntries={6}
+                    renderRow={(doc, i) => (
+                        <tr key={doc._id || i} className="hover:bg-slate-50/50 transition-colors group cursor-pointer">
+                            <td className="px-6 py-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="size-8 rounded-lg bg-blue-light flex items-center justify-center text-blue-primary group-hover:bg-blue-secondary group-hover:text-white transition-colors">
+                                        <span className="material-symbols-outlined text-lg">description</span>
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-sm font-semibold text-slate-700 group-hover:text-blue-secondary transition-colors truncate max-w-[200px]">
+                                            {doc.repository_name || "Untitled Document"}
+                                        </span>
+                                        <span className="text-[10px] text-slate-400 font-medium">ID: {doc._id}...</span>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="text-sm font-semibold text-slate-700 group-hover:text-blue-secondary transition-colors truncate max-w-[200px]">
-                                        {doc.repository_name || "Untitled Document"}
-                                    </span>
-                                    <span className="text-[10px] text-slate-400 font-medium">ID: {doc._id}...</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td className="px-6 py-4">
-                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${getStatusColor(doc.status)}`}>
-                                {doc.status}
-                            </span>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-slate-500">{formatDate(doc.createdAt || doc.updatedAt)}</td>
-                        <td className="px-6 py-4 text-right">
-                            <button
-                                onClick={() => {
-                                    setSelectedRepo({ _id: doc.repository_id, name: doc.repository_name });
-                                    setView("details");
-                                }}
-                                className="text-slate-400 hover:text-blue-secondary transition-colors cursor-pointer"
-                            >
-                                <span className="text-primary font-semibold hover:text-primary/80 transition-colors text-sm">View Full Doc</span>
-                            </button>
-                        </td>
-                    </tr>
-                )}
-            />
+                            </td>
+                            <td className="px-6 py-4">
+                                <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${getStatusColor(doc.status)}`}>
+                                    {doc.status}
+                                </span>
+                            </td>
+                            <td className="px-6 py-4 text-sm text-slate-500">{formatDate(doc.createdAt || doc.updatedAt)}</td>
+                            <td className="px-6 py-4 text-right">
+                                <button
+                                    onClick={() => {
+                                        setSelectedRepo({ _id: doc.repository_id, name: doc.repository_name });
+                                        setView("details");
+                                    }}
+                                    className="text-slate-400 hover:text-blue-secondary transition-colors cursor-pointer"
+                                >
+                                    <span className="text-primary font-semibold hover:text-primary/80 transition-colors text-sm">View Full Doc</span>
+                                </button>
+                            </td>
+                        </tr>
+                    )}
+                />
+            ) : (
+                <div className="bg-white rounded-xl border border-slate-200 p-12 flex flex-col items-center justify-center text-center">
+                    <div className="size-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                        <span className="material-symbols-outlined text-3xl text-slate-300">search_off</span>
+                    </div>
+                    <h3 className="text-lg font-semibold text-slate-800">No documents found</h3>
+                    <p className="text-slate-500 max-w-xs mt-1">
+                        We couldn't find any documents matching "{searchQuery}".
+                    </p>
+                </div>
+            )}
             <NewAnalysisModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </div>
     );
