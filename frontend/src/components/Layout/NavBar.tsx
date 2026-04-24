@@ -27,12 +27,12 @@ function NavBar({ title }: { title: string }) {
       </div>
 
       <div className="flex items-center gap-5 text-gray-600">
-        <button className="p-2 rounded-lg hover:bg-gray-100">
+        {/* <button className="p-2 rounded-lg hover:bg-gray-100">
           <span className="material-symbols-outlined">notifications</span>
         </button>
         <button className="p-2 rounded-lg hover:bg-gray-100">
           <span className="material-symbols-outlined">help</span>
-        </button>
+        </button> */}
         {user ? (
           <div className="flex items-center gap-3">
             <span className="text-sm font-medium text-gray-700 hidden md:block">
