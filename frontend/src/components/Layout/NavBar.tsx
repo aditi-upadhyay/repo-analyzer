@@ -1,7 +1,9 @@
 import { useAuth } from "../../context/AuthContext";
+import { useDocumentation } from "../../context/DocumentationContext";
 
 function NavBar({ title }: { title: string }) {
   const { user } = useAuth();
+  const { searchQuery, setSearchQuery } = useDocumentation();
 
   const getInitials = (name?: string) => {
     if (!name) return "U";
@@ -14,15 +16,27 @@ function NavBar({ title }: { title: string }) {
         <span className="text-lg font-semibold whitespace-nowrap">
           {title}
         </span>
-        <div className="flex items-center bg-gray-100 border border-gray-200 rounded-full px-4 py-1.5 gap-2 flex-1 max-w-2xl transition">
-          <span className="material-symbols-outlined text-gray-500 text-[18px]">
+        <div className="flex items-center bg-gray-100 border border-gray-200 rounded-full px-4 py-1.5 gap-2 flex-1 max-w-2xl transition focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500/40">
+          <span className="material-symbols-outlined text-gray-400 text-[18px]">
             search
           </span>
           <input
             type="text"
             placeholder="Search repositories, files..."
-            className="bg-transparent outline-none text-sm flex-1 placeholder-gray-400"
+            className="bg-transparent outline-none text-sm flex-1 placeholder-gray-400 text-gray-700"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="flex items-center justify-center p-0.5 hover:bg-gray-200 rounded-full transition"
+            >
+              <span className="material-symbols-outlined text-gray-400 text-[16px]">
+                close
+              </span>
+            </button>
+          )}
         </div>
       </div>
 
