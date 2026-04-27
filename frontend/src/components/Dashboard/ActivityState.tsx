@@ -55,7 +55,7 @@ function ActivityState({ data = [] }: { data?: any[] }) {
   };
 
   return (
-    <div className="flex flex-col p-4 gap-4 max-w-7xl mx-auto w-full">
+    <div className="flex flex-col p-4 gap-4 max-w-7xl mx-auto w-full min-h-full">
       <DocPreviewCard
         repositoryName={latestRepo?.name}
         onViewClick={() => latestRepo && handleViewDocumentation(latestRepo)}
@@ -171,12 +171,12 @@ function ActivityState({ data = [] }: { data?: any[] }) {
           )}
         />
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 p-12 flex flex-col items-center justify-center text-center">
-          <div className="size-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-            <span className="material-symbols-outlined text-3xl text-slate-300">search_off</span>
+        <div className="bg-white rounded-xl border border-slate-200 p-12 flex flex-col items-center justify-center text-center flex-1">
+          <div className="size-24 bg-slate-50 rounded-full flex items-center justify-center mb-6">
+            <span className="material-symbols-outlined text-5xl text-slate-300">search_off</span>
           </div>
-          <h3 className="text-lg font-semibold text-slate-800">No results found</h3>
-          <p className="text-slate-500 max-w-xs mt-1">
+          <h3 className="text-2xl font-bold text-slate-800">No results found</h3>
+          <p className="text-slate-500 max-w-md mt-2 text-lg">
             We couldn't find any repositories matching "{searchQuery}". Try a different search term.
           </p>
         </div>
