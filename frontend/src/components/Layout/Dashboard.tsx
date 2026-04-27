@@ -16,7 +16,7 @@ function Dashboard() {
     const isEmptyState = repositories.length === 0;
 
     return (
-        <div className="bg-gray-100 min-h-full">
+        <div className="bg-gray-100 h-full flex flex-col">
             {isEmptyState ? <EmptyState /> : <ActivityState data={repositories} />}
         </div>
     );
