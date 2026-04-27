@@ -55,7 +55,7 @@ function ActivityState({ data = [] }: { data?: any[] }) {
   };
 
   return (
-    <div className="flex flex-col p-4 gap-4 max-w-7xl mx-auto w-full min-h-full">
+    <div className="flex flex-col p-4 gap-4 max-w-7xl mx-auto w-full flex-1 min-h-0">
       <DocPreviewCard
         repositoryName={latestRepo?.name}
         onViewClick={() => latestRepo && handleViewDocumentation(latestRepo)}
