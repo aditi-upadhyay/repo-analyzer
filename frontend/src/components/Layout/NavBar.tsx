@@ -1,7 +1,7 @@
 import { useAuth } from "../../context/AuthContext";
 import { useDocumentation } from "../../context/DocumentationContext";
 
-function NavBar({ title }: { title: string }) {
+function NavBar({ title, onMenuClick }: { title: string, onMenuClick?: () => void }) {
   const { user } = useAuth();
   const { searchQuery, setSearchQuery } = useDocumentation();
 
@@ -11,9 +11,15 @@ function NavBar({ title }: { title: string }) {
   };
 
   return (
-    <div className="flex items-center justify-between px-6 py-3 border-b border-gray-200 bg-white">
-      <div className="flex items-center gap-6 flex-1">
-        <span className="text-lg font-semibold whitespace-nowrap">
+    <div className="flex items-center justify-between px-6 py-3 border-b border-gray-200 bg-white gap-4">
+      <div className="flex items-center gap-4 sm:gap-6 flex-1">
+        <button 
+          className="md:hidden text-gray-500 hover:text-gray-700 focus:outline-none flex items-center justify-center -ml-2"
+          onClick={onMenuClick}
+        >
+          <span className="material-symbols-outlined text-2xl">menu</span>
+        </button>
+        <span className="text-lg font-semibold whitespace-nowrap hidden sm:block">
           {title}
         </span>
         <div className="flex items-center bg-gray-100 border border-gray-200 rounded-full px-4 py-1.5 gap-2 flex-1 max-w-2xl transition focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500/40">
