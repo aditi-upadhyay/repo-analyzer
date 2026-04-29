@@ -18,15 +18,15 @@ const DocPreviewCard: React.FC<DocPreviewCardProps> = ({ repositoryName, onViewC
     if (!repositoryName) return null;
 
     return (
-        <div className="group relative overflow-hidden rounded-2xl bg-blue-secondary p-6 transition-all duration-300 hover:-translate-y-0.5">
-            <div className="absolute right-0 top-0 -translate-y-12 translate-x-12 opacity-10 transition-transform duration-500 group-hover:scale-110">
-                <span className="material-symbols-outlined text-[12rem] text-white">auto_stories</span>
+        <div className="group relative overflow-hidden rounded-2xl bg-blue-secondary p-5 sm:p-6 transition-all duration-300 hover:-translate-y-0.5 shrink-0">
+            <div className="absolute right-0 top-0 -translate-y-12 translate-x-12 opacity-10 transition-transform duration-500 group-hover:scale-110 pointer-events-none">
+                <span className="material-symbols-outlined text-[10rem] sm:text-[12rem] text-white">auto_stories</span>
             </div>
 
-            <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex gap-5 items-center">
-                    <div className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white shadow-inner backdrop-blur-md transition-transform duration-300 group-hover:scale-110">
-                        <span className="material-symbols-outlined text-3xl">auto_stories</span>
+            <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-5 sm:gap-6">
+                <div className="flex gap-4 sm:gap-5 items-center min-w-0">
+                    <div className="flex size-12 sm:size-14 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white shadow-inner backdrop-blur-md transition-transform duration-300 group-hover:scale-110">
+                        <span className="material-symbols-outlined text-2xl sm:text-3xl">auto_stories</span>
                     </div>
                     <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2">
