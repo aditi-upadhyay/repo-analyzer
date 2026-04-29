@@ -9,8 +9,8 @@ interface DocPreviewCardProps {
 const DocPreviewCard: React.FC<DocPreviewCardProps> = ({ repositoryName, onViewClick, isLoading }) => {
     if (isLoading) {
         return (
-            <div className="group relative overflow-hidden rounded-2xl bg-blue-secondary/80 p-6 animate-pulse">
-                <div className="h-14 w-full bg-white/10 rounded-xl"></div>
+            <div className="group relative overflow-hidden rounded-2xl bg-blue-secondary/80 p-5 sm:p-6 animate-pulse shrink-0">
+                <div className="h-28 md:h-16 w-full bg-white/10 rounded-xl"></div>
             </div>
         );
     }
