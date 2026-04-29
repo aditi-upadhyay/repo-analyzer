@@ -33,13 +33,13 @@ const DocPreviewCard: React.FC<DocPreviewCardProps> = ({ repositoryName, onViewC
                             <span className="size-1.5 sm:size-2 shrink-0 rounded-full bg-green-400 animate-pulse"></span>
                             <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-white/70 truncate">Recently generated</span>
                         </div>
-                        <h3 className="text-2xl font-bold text-white tracking-tight">Documentation: {repositoryName}</h3>
+                        <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight truncate">Documentation: {repositoryName}</h3>
                     </div>
                 </div>
 
                 <button
                     onClick={onViewClick}
-                    className="group/btn flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-blue-secondary shadow-md transition-all hover:bg-slate-50 hover:shadow-lg active:scale-95"
+                    className="group/btn flex w-full md:w-auto shrink-0 justify-center items-center gap-2 rounded-xl bg-white px-6 sm:px-8 py-3 sm:py-3.5 text-sm font-bold text-blue-secondary shadow-md transition-all hover:bg-slate-50 hover:shadow-lg active:scale-95"
                 >
                     View Latest Docs
                     <span className="material-symbols-outlined text-lg transition-transform group-hover/btn:translate-x-1">arrow_forward</span>
