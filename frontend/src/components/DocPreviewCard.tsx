@@ -28,10 +28,10 @@ const DocPreviewCard: React.FC<DocPreviewCardProps> = ({ repositoryName, onViewC
                     <div className="flex size-12 sm:size-14 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white shadow-inner backdrop-blur-md transition-transform duration-300 group-hover:scale-110">
                         <span className="material-symbols-outlined text-2xl sm:text-3xl">auto_stories</span>
                     </div>
-                    <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2">
-                            <span className="size-2 rounded-full bg-green-400 animate-pulse"></span>
-                            <span className="text-xs font-bold uppercase tracking-widest text-white/70">Recently generated</span>
+                    <div className="flex flex-col gap-0.5 sm:gap-1 min-w-0">
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                            <span className="size-1.5 sm:size-2 shrink-0 rounded-full bg-green-400 animate-pulse"></span>
+                            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-white/70 truncate">Recently generated</span>
                         </div>
                         <h3 className="text-2xl font-bold text-white tracking-tight">Documentation: {repositoryName}</h3>
                     </div>
