@@ -41,7 +41,7 @@ const DocPreviewCard: React.FC<DocPreviewCardProps> = ({ repositoryName, onViewC
                     onClick={onViewClick}
                     className="group/btn flex w-full md:w-auto shrink-0 justify-center items-center gap-2 rounded-xl bg-white px-6 sm:px-8 py-3 sm:py-3.5 text-sm font-bold text-blue-secondary shadow-md transition-all hover:bg-slate-50 hover:shadow-lg active:scale-95"
                 >
-                    View Latest Docs
+                    View Latest Docs changes
                     <span className="material-symbols-outlined text-lg transition-transform group-hover/btn:translate-x-1">arrow_forward</span>
                 </button>
             </div>
