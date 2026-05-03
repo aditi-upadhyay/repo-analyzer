@@ -134,4 +134,3 @@ async def analyze_zip(
         
     return {"status": "Analysis started", "session_id": session_id}
 
-# uvicorn src.server:app --reload
