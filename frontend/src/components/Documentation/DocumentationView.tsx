@@ -27,7 +27,7 @@ const NavItem = ({ label, active, onClick }: NavItemProps) => (
 
 const DocumentationView: React.FC = () => {
     const { selectedRepo } = useDocumentation();
-    const { latestDocument } = useAuth();
+    const { latestDocument, fetchLatestDocument } = useAuth();
     const [markdown, setMarkdown] = useState<string>("");
     const [sections, setSections] = useState<{ id: string; label: string }[]>([]);
     const [activeSection, setActiveSection] = useState<string>("");
@@ -35,6 +35,14 @@ const DocumentationView: React.FC = () => {
     const containerRef = React.useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        if (!selectedRepo && fetchLatestDocument) {
+            fetchLatestDocument();
+        }
+    }, []);
+
+    useEffect(() => {
+        let isCancelled = false;
+        
         const fetchDoc = async () => {
             // Determine which repo/doc to fetch
             const repoToFetch = selectedRepo || (latestDocument ? { _id: latestDocument.repository_id, name: "Latest Analysis" } : null);
@@ -47,6 +55,8 @@ const DocumentationView: React.FC = () => {
             setIsLoading(true);
             try {
                 const response = await axios.get(`${API_BASE_URL}/api/documents/repository/${repoToFetch._id}`);
+                if (isCancelled) return;
+                
                 if (response.data && response.data.content) {
                     const content = response.data.content;
                     setMarkdown(content);
@@ -67,14 +77,21 @@ const DocumentationView: React.FC = () => {
                     setMarkdown(`# Error\n\n${response.data.error}`);
                 }
             } catch (error: any) {
+                if (isCancelled) return;
                 console.error("Failed to fetch documentation:", error);
                 const errorMsg = error.response?.data?.detail || "Failed to fetch documentation from the database.";
                 setMarkdown(`# Documentation Not Found\n\n${errorMsg}\n\nIt seems the documentation for this repository is not available in the database.`);
             } finally {
-                setIsLoading(false);
+                if (!isCancelled) {
+                    setIsLoading(false);
+                }
             }
         };
         fetchDoc();
+        
+        return () => {
+            isCancelled = true;
+        };
     }, [selectedRepo, latestDocument]);
 
     useEffect(() => {
