@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
+import { useDocumentation } from "../../context/DocumentationContext";
 interface NewAnalysisModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -11,6 +12,7 @@ interface NewAnalysisModalProps {
 function NewAnalysisModal({ isOpen, onClose, initialTab }: NewAnalysisModalProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { setSelectedRepo } = useDocumentation();
   const [activeTab, setActiveTab] = useState(initialTab || "GitHub URL");
   const [repoUrl, setRepoUrl] = useState("");
   const [accessToken, setAccessToken] = useState("");
@@ -55,6 +57,7 @@ function NewAnalysisModal({ isOpen, onClose, initialTab }: NewAnalysisModalProps
         repoName = repoUrl.split("/").pop()?.replace(".git", "") || "unknown-repo";
       }
 
+      setSelectedRepo(null);
       onClose();
       navigate("/analysis", {
         state: { sessionId, repoUrl: activeTab === "Upload ZIP" ? "Uploaded ZIP" : repoUrl, repoName },
