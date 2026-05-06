@@ -49,6 +49,13 @@ function NewAnalysisModal({ isOpen, onClose, initialTab }: NewAnalysisModalProps
 
         await axios.post("http://127.0.0.1:8000/analyze-zip", formData);
         repoName = selectedFile.name.split(".")[0];
+      } else if (activeTab === "Local path" && localPath) {
+        await axios.post("http://127.0.0.1:8000/analyze-local", {
+          local_path: localPath,
+          session_id: sessionId,
+          user_id: user?._id || null,
+        });
+        repoName = localPath.split("/").pop() || "local-repo";
       } else {
         await axios.post("http://127.0.0.1:8000/analyze", {
           repo_url: repoUrl,
@@ -62,7 +69,11 @@ function NewAnalysisModal({ isOpen, onClose, initialTab }: NewAnalysisModalProps
       setSelectedRepo(null);
       onClose();
       navigate("/analysis", {
-        state: { sessionId, repoUrl: activeTab === "Upload ZIP" ? "Uploaded ZIP" : repoUrl, repoName },
+        state: { 
+          sessionId, 
+          repoUrl: activeTab === "Upload ZIP" ? "Uploaded ZIP" : (activeTab === "Local path" ? localPath : repoUrl), 
+          repoName 
+        },
       });
     } catch (error) {
       console.error(error);
