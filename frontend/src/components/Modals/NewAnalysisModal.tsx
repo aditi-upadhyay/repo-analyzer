@@ -17,6 +17,7 @@ function NewAnalysisModal({ isOpen, onClose, initialTab }: NewAnalysisModalProps
   const [repoUrl, setRepoUrl] = useState("");
   const [accessToken, setAccessToken] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [localPath, setLocalPath] = useState("");
   const tabs = [
     { name: "GitHub URL", icon: "link" },
     { name: "Upload ZIP", icon: "upload_file" },
@@ -29,6 +30,7 @@ function NewAnalysisModal({ isOpen, onClose, initialTab }: NewAnalysisModalProps
       setRepoUrl("");
       setAccessToken("");
       setSelectedFile(null);
+      setLocalPath("");
     }
   }, [isOpen, initialTab]);
 
