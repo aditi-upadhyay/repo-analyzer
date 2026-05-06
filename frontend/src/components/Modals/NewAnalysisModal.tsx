@@ -202,6 +202,8 @@ function NewAnalysisModal({ isOpen, onClose, initialTab }: NewAnalysisModalProps
                 <div className="relative">
                   <input
                     type="text"
+                    value={localPath}
+                    onChange={(e) => setLocalPath(e.target.value)}
                     placeholder="/Users/username/projects/my-repo"
                     className="w-full p-4 pl-12 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-blue-secondary/30 focus:bg-white transition-all text-slate-700 placeholder:text-slate-300 font-medium"
                   />
