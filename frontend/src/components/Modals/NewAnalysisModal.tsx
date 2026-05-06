@@ -245,10 +245,10 @@ function NewAnalysisModal({ isOpen, onClose, initialTab }: NewAnalysisModalProps
             Cancel
           </button>
           <button
-            disabled={activeTab === "Upload ZIP" ? !selectedFile : !repoUrl.trim()}
+            disabled={activeTab === "Upload ZIP" ? !selectedFile : activeTab === "Local path" ? !localPath.trim() : !repoUrl.trim()}
             onClick={handleAnalyze}
             className={`flex items-center gap-2 text-white py-3 px-8 rounded-2xl font-bold
-    ${(activeTab === "Upload ZIP" ? selectedFile : repoUrl.trim())
+    ${(activeTab === "Upload ZIP" ? selectedFile : activeTab === "Local path" ? localPath.trim() : repoUrl.trim())
                 ? "bg-blue-secondary hover:bg-blue-primary shadow-xl shadow-blue-600/20 transition-all cursor-pointer group"
                 : "bg-blue-secondary opacity-50 cursor-not-allowed"
               }`}
@@ -256,7 +256,7 @@ function NewAnalysisModal({ isOpen, onClose, initialTab }: NewAnalysisModalProps
             Analyze repository
             <span
               className={`material-symbols-outlined text-lg 
-                ${(activeTab === "Upload ZIP" ? selectedFile : repoUrl.trim())
+                ${(activeTab === "Upload ZIP" ? selectedFile : activeTab === "Local path" ? localPath.trim() : repoUrl.trim())
                   ? "group-hover:translate-x-1 transition-transform"
                   : ""
                 }`}
